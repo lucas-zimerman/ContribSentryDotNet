@@ -22,7 +22,7 @@ namespace sentry_dotnet_transaction_addon.Extensibility
 
         public ISpanBase GetSpan(string op) => DisabledSpan.Instance;
 
-        public ISpanBase StartChild(string description, string op = null) => null;
+        public ISpanBase StartChild(string description, string op = null) => DisabledSpan.Instance;
 
         public ISpanBase StartChild(string url, ESpanRequest requestType) => DisabledSpan.Instance;
     }

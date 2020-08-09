@@ -51,18 +51,27 @@ namespace sentry_dotnet_transaction_addon
         public static ISentryTracing StartTransaction(string name)
         {
             var tracing = new SentryTracing(name);
-            _transactionStorage.Add(new KeyValuePair<int?, SentryTracing>(Task.CurrentId, tracing));
+            lock (_transactionStorage)
+            {
+                _transactionStorage.Add(new KeyValuePair<int?, SentryTracing>(Task.CurrentId, tracing));
+            }
             return tracing;
         }
 
         public static ISentryTracing RetreiveTransactionById(string id)
         {
-            return _transactionStorage.FirstOrDefault(p => p.Value.Trace.TraceId == id).Value ?? (ISentryTracing)DisabledTracing.Instance;
+            lock (_transactionStorage)
+            {
+                return _transactionStorage.FirstOrDefault(p => p.Value.Trace.TraceId == id).Value ?? (ISentryTracing)DisabledTracing.Instance;
+            }
         }
 
         public static ISentryTracing RetreiveTransactionByName(string name)
         {
-            return _transactionStorage.FirstOrDefault(p => p.Value.Transaction == name).Value ?? (ISentryTracing)DisabledTracing.Instance;
+            lock (_transactionStorage)
+            {
+                return _transactionStorage.FirstOrDefault(p => p.Value.Transaction == name).Value ?? (ISentryTracing)DisabledTracing.Instance;
+            }
         }
 
         /// <summary>
@@ -71,10 +80,13 @@ namespace sentry_dotnet_transaction_addon
         /// <returns></returns>
         public static ISentryTracing GetCurrentTransaction()
         {
-            if (!IsEnabled() || _transactionStorage.Count() == 0)
-                return DisabledTracing.Instance;
-            var keyPair = _transactionStorage.LastOrDefault(p => p.Key == Task.CurrentId);
-            return keyPair.Value ?? (ISentryTracing)DisabledTracing.Instance;
+            lock (_transactionStorage)
+            {
+                if (!IsEnabled() || _transactionStorage.Count() == 0)
+                    return DisabledTracing.Instance;
+                var keyPair = _transactionStorage.LastOrDefault(p => p.Key == Task.CurrentId);
+                return keyPair.Value ?? (ISentryTracing)DisabledTracing.Instance;
+            }
         }
 
         public static ISpanBase GetCurrentTracingSpan()
@@ -106,7 +118,10 @@ namespace sentry_dotnet_transaction_addon
 
         internal static void DisposeTracingEvent(SentryTracing tracing)
         {
-            _transactionStorage.Remove(_transactionStorage.First(p => p.Value.Equals(tracing)));
+            lock (_transactionStorage)
+            {
+                _transactionStorage.Remove(_transactionStorage.First(p => p.Value.Equals(tracing)));
+            }
         }
     }
 }
