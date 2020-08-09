@@ -2,6 +2,7 @@
 using Sentry;
 using sentry_dotnet_transaction_addon.Converters;
 using sentry_dotnet_transaction_addon.Extensions;
+using sentry_dotnet_transaction_addon.Interface;
 using sentry_dotnet_transaction_addon.Internals;
 using System;
 using System.Collections.Generic;
@@ -10,13 +11,13 @@ using System.Threading.Tasks;
 
 namespace sentry_dotnet_transaction_addon
 {
-    public class SentryTracingEvent : SentryEvent, ITransactionEvent
+    public class SentryTracingEvent : SentryEvent
     {
         [JsonProperty("type")]
         public string Type { get; private set; }
 
         [JsonProperty("spans")]
-        public List<Span> Spans { get; private set; }
+        public List<ISpanBase> Spans { get; private set; }
 
         [JsonProperty("start_timestamp")]
         public DateTimeOffset StartTimestamp { get; private set; }
@@ -25,14 +26,7 @@ namespace sentry_dotnet_transaction_addon
         {
             Transaction = transactionEvent.Transaction;
             Type = "transaction";
-            try
-            {
-                Contexts.AddOrUpdate("trace", transactionEvent.Trace, (id, trace) => trace);
-            }
-            catch (Exception e)
-            {
-
-            }
+            Contexts.AddOrUpdate("trace", transactionEvent.Trace, (id, trace) => trace);
             Spans = transactionEvent.Spans;
             StartTimestamp = transactionEvent.StartTimestamp;
         }
@@ -52,9 +46,9 @@ namespace sentry_dotnet_transaction_addon
                             EventId = EventId.ToString(),
                             SentAt = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:MM:ss.ffZ")
                         });
-                        var @type = "{\"type\"=\"transaction\"}";
+                        var @type = "{\"type\":\"transaction\"}";
                         var content = new StringContent(@event + '\n' + @type + '\n' + json);
-                        var url = SentryTracingSDK.TracingOptions.Dsn.GetTracingUrl();
+                        var url = SentryTracingSdk.TracingOptions.Dsn.GetTracingUrl();
                         var @return = await client.PostAsync(url, content);
                     }
                 }
