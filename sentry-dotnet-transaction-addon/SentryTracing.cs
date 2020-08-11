@@ -24,8 +24,6 @@ namespace sentry_dotnet_transaction_addon
             Spans = new List<ISpanBase>();
         }
 
-        public string Id => Guid.NewGuid().ToString();
-
         public ISpanBase GetSpan(string op)
         {
             return Spans.FirstOrDefault(s => s.Op == op);
