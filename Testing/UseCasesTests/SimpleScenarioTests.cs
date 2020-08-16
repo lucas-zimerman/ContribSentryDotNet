@@ -2,16 +2,12 @@
 using sentry_dotnet_transaction_addon.Enums;
 using sentry_dotnet_transaction_addon.Internals;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace Testing.UseCasesTests
-{//Thread.CurrentThread.ManagedThreadId
+{
     public class SimpleScenarioTests
     {
         public SimpleScenarioTests()

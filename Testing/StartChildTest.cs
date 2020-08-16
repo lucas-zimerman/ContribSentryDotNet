@@ -3,8 +3,6 @@ using sentry_dotnet_transaction_addon.Enums;
 using sentry_dotnet_transaction_addon.Extensibility;
 using sentry_dotnet_transaction_addon.Interface;
 using sentry_dotnet_transaction_addon.Internals;
-using System.Diagnostics;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
