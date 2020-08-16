@@ -3,7 +3,7 @@ using Sentry.Extensibility;
 
 namespace sentry_dotnet_transaction_addon
 {
-    public class SentryTracingEventProcessor : ISentryEventProcessor
+    internal class SentryTracingEventProcessor : ISentryEventProcessor
     {
         public SentryEvent Process(SentryEvent @event)
         {
