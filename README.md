@@ -1,4 +1,4 @@
-# sentry dotnet transaction addon
+# sentry dotnet transaction addon V2.0.0
 ### Unnoficial addon for adding Peformance support to Sentry-dotnet
 
 # Status
@@ -8,11 +8,11 @@ Official Docs: https://docs.sentry.io/performance-monitoring/getting-started/
 
 # Configuration
 
-To initialize the performance addon you'll need to call SentryTracingSdk.Init
+To initialize the performance addon you'll need add the SentryTracingSdkIntegration to your SentryOptions integration.
 ```C#
-SentryTracingSDK.Init(dsn);
+sentryOptions.AddIntegration(new SentryTracingSdkIntegration());
 ```
-Also you will need to attach to your Sentry options the SentryTracingEventProcessor so the addon can consume the Tracing event when it's ready 
+you'll of course need to initialize SentrySdk giving passing the SentryOptions where you added the Integration.
 
 # Usage
 You can start/finish a Transaction by creating an transaction Object or by 'using'
@@ -34,7 +34,7 @@ using(var transaction = SentryTracingSDK.StartTransaction( name ))
 }
 ```
 
-You can also start a child anywhere in the code, as long as there's an active Transaction running at the current Thread, else
+You can also start a child anywhere in the code, as long as there's an active Isolated Transaction, else
 the child will be discarted
 ```C#
 using(var child = SentryTracingSDK.StartChild( url, Post ))
@@ -43,3 +43,13 @@ using(var child = SentryTracingSDK.StartChild( url, Post ))
  child.Finish(httpstatuscode);// child finished with the current status code
 }
 ```
+
+To isolate a Transaction if you would like to start a child by not referencing the Tracing object you'll need to run the following code 
+```C#
+var transaction = SentryTracingSDK.StartTransaction( name );
+await transaction.IsolateTracking(async ()=>{
+ // your code here
+});
+transaction.Finish();
+```
+That way, if the code SentryTracingSDK.StartChild is called and the stack trace is inside of an isolated Transaction block, the Span will be attached to the Isolated Transaction. 
