@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace sentry_dotnet_transaction_addon.Extensibility
 {
@@ -25,5 +26,14 @@ namespace sentry_dotnet_transaction_addon.Extensibility
         public ISpanBase StartChild(string description, string op = null) => DisabledSpan.Instance;
 
         public ISpanBase StartChild(string url, ESpanRequest requestType) => DisabledSpan.Instance;
+
+        /// <summary>
+        /// Despite being disabled we must execute the user code
+        /// </summary>
+        /// <returns>A task where the user code is running</returns>
+        public Task IsolateTracking(Func<Task> trackedCode)
+        {
+            return trackedCode.Invoke();
+        }
     }
 }

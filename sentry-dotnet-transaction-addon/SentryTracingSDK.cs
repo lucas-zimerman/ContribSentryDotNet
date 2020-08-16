@@ -3,8 +3,10 @@ using sentry_dotnet_transaction_addon.Enums;
 using sentry_dotnet_transaction_addon.Extensibility;
 using sentry_dotnet_transaction_addon.Interface;
 using sentry_dotnet_transaction_addon.Internals;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace sentry_dotnet_transaction_addon
@@ -12,50 +14,37 @@ namespace sentry_dotnet_transaction_addon
     public static class SentryTracingSdk
     {
         internal static List<KeyValuePair<int?, SentryTracing>> _transactionStorage = new List<KeyValuePair<int?, SentryTracing>>();
+        internal static ThreadTracking Tracker;
 
         internal static SentryTracingOptions TracingOptions { get; set; }
 
         /// <summary>
-        /// Initialize the Tracing Sdk.
+        /// Change the Dsn for SentryTracingSdk, it's optional since the Dsn is taken from SentrySdk.
         /// </summary>
-        public static void Init(string dsn)
+        public static void SetDsn(Dsn dsn)
         {
-            Init(new SentryTracingOptions(new Dsn(dsn)));
+            if (IsEnabled())
+            {
+                TracingOptions.Dsn = dsn;
+            }
         }
 
         /// <summary>
         /// Initialize the Tracing Sdk.
         /// </summary>
-        public static void Init(Dsn dsn)
-        {
-            Init(new SentryTracingOptions(dsn));
-        }
-
-        /// <summary>
-        /// Initialize the Tracing Sdk.
-        /// </summary>
-        public static void Init(SentryTracingOptions options)
+        internal static void Init(SentryTracingOptions options)
         {
             TracingOptions = options;
+            Tracker = new ThreadTracking();
         }
 
         public static bool IsEnabled() => TracingOptions != null;
 
         public static void Close()
         {
-            _transactionStorage.Clear();
             _transactionStorage = null;
             TracingOptions = null;
-        }
-
-        public static ISentryTracing StartTransaction(string name)
-        {
-            var tracing = new SentryTracing(name);
-            lock (_transactionStorage)
-            {
-                _transactionStorage.Add(new KeyValuePair<int?, SentryTracing>(Task.CurrentId, tracing));
-            }
-            return tracing;
+            Tracker = null;
         }
 
         public static ISentryTracing RetreiveTransactionById(string id)
@@ -82,9 +71,10 @@ namespace sentry_dotnet_transaction_addon
         {
             lock (_transactionStorage)
             {
-                if (!IsEnabled() || _transactionStorage.Count() == 0)
+                if (!IsEnabled() || _transactionStorage.Count() == 0 || !Tracker.Created)
                     return DisabledTracing.Instance;
-                var keyPair = _transactionStorage.LastOrDefault(p => p.Key == Task.CurrentId);
+                var id = Tracker.Id;
+                var keyPair = _transactionStorage.LastOrDefault(p => p.Key == id);
                 return keyPair.Value ?? (ISentryTracing)DisabledTracing.Instance;
             }
         }
@@ -92,6 +82,17 @@ namespace sentry_dotnet_transaction_addon
         public static ISpanBase GetCurrentTracingSpan()
         {
             return GetCurrentTransaction().GetCurrentSpan();
+        }
+
+        public static ISentryTracing StartTransaction(string name)
+        {
+            var id = Tracker.StartUnsafeTrackingId();
+            var tracing = new SentryTracing(name, id);
+            lock (_transactionStorage)
+            {
+                _transactionStorage.Add(new KeyValuePair<int?, SentryTracing>(id, tracing));
+            }
+            return tracing;
         }
 
         public static ISpanBase StartChild(string url, ESpanRequest requestType)

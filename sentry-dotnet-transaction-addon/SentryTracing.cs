@@ -6,6 +6,7 @@ using sentry_dotnet_transaction_addon.Internals;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace sentry_dotnet_transaction_addon
 {
@@ -13,14 +14,17 @@ namespace sentry_dotnet_transaction_addon
     {
         public List<ISpanBase> Spans { get; private set; }
         public DateTimeOffset StartTimestamp { get; private set; }
+        public int TrackerId { get; private set; }
+
 
         internal Trace Trace { get; private set; }
         public string Transaction { get; private set; }
-        public SentryTracing(string name)
+        public SentryTracing(string name, int trackerId)
         {
             Trace = new Trace();
             Transaction = name;
             StartTimestamp = DateTimeOffset.Now;
+            TrackerId = trackerId;
             Spans = new List<ISpanBase>();
         }
 
@@ -44,7 +48,7 @@ namespace sentry_dotnet_transaction_addon
         public ISpanBase StartChild(string url, ESpanRequest requestType)
         {
             var span = new Span(Trace.TraceId, Trace.SpanId, url, requestType);
-            span.Spans = Spans;
+            span.GetParentSpans(Spans);
             Spans.Add(span);
             return span;
         }
@@ -69,6 +73,11 @@ namespace sentry_dotnet_transaction_addon
         public void Dispose()
         {
             Finish();
+        }
+
+        public Task IsolateTracking(Func<Task> trackedCode)
+        {
+            return SentryTracingSdk.Tracker.StartCallbackTrackingIdAsync(trackedCode, TrackerId);
         }
     }
 }
