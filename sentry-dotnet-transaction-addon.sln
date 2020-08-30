@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sentry-dotnet-transaction-a
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testing", "Testing\Testing.csproj", "{9C294F90-9E37-442C-A963-AABFFEE3A66F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sentry-dotnet-health-addon", "sentry-dotnet-health-addon\sentry-dotnet-health-addon.csproj", "{BD802D38-3F09-4F2D-867B-C94AED25CE84}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SessionTesting", "SessionTesting\SessionTesting.csproj", "{0F7D7011-95D0-493C-A0FF-68AB9536F56D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{9C294F90-9E37-442C-A963-AABFFEE3A66F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C294F90-9E37-442C-A963-AABFFEE3A66F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C294F90-9E37-442C-A963-AABFFEE3A66F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD802D38-3F09-4F2D-867B-C94AED25CE84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD802D38-3F09-4F2D-867B-C94AED25CE84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD802D38-3F09-4F2D-867B-C94AED25CE84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD802D38-3F09-4F2D-867B-C94AED25CE84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F7D7011-95D0-493C-A0FF-68AB9536F56D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F7D7011-95D0-493C-A0FF-68AB9536F56D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F7D7011-95D0-493C-A0FF-68AB9536F56D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F7D7011-95D0-493C-A0FF-68AB9536F56D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
