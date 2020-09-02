@@ -2,7 +2,6 @@
 using Sentry.Extensibility;
 using Sentry.Protocol;
 using sentry_dotnet_health_addon.Enums;
-using sentry_dotnet_health_addon.Transport;
 using System;
 using System.Linq;
 
@@ -22,7 +21,7 @@ namespace sentry_dotnet_health_addon
                     //crash, must close the session
                     session.End(DateTime.Now);
                     session.Status = SessionState.Crashed;
-                    HttpTransport.SendEnvelope(session).Wait(3000);
+                    SentrySessionSdk.CaptureSession(session);
                 }
             }
             return @event;

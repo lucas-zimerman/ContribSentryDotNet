@@ -1,28 +1,29 @@
 ﻿using Newtonsoft.Json;
 using Sentry.Protocol;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace sentry_dotnet_health_addon.Internals
 {
-    internal class SentryEnvelopeHeader
+    public class SentryEnvelopeHeader
     {
+        /// <summary>
+        ///Event Id must be set if the envelope holds an event, or an item that is related to the event.<br/>
+        /// (e.g: attachments, user feedback)
+        /// </summary>
         [JsonProperty("eventId")]
-        private SentryId _eventId;
+        public SentryId EventId { get; private set; }
 
         [JsonProperty("sdkVersion")]
-        private SdkVersion _sdkVersion;
+        public SdkVersion SdkVersion { get; private set; }
         
-        [JsonProperty("SentAt")]
-        private string _sentAt;
-        
+        [JsonProperty("sentAt")]
+        public string SentAt { get; private set; }
 
-        internal SentryEnvelopeHeader()
+        internal SentryEnvelopeHeader(SentryId eventId, SdkVersion version)
         {
-            _eventId = SentryId.Empty;
-            _sdkVersion = new SdkVersion() { Name = "LucasSdk", Version = "1.0.0" }; 
-            _sentAt = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:MM:ss.ffZ");
+            EventId = eventId;
+            SdkVersion = version;
+            SentAt = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:MM:ss.ffZ");
         }
     }
 }

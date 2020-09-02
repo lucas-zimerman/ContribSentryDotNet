@@ -11,4 +11,8 @@
     <PackageReference Include="Sentry.Protocol" Version="2.1.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Integrations\" />
+  </ItemGroup>
+
 </Project>

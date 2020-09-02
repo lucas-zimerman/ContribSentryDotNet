@@ -1,23 +1,21 @@
-﻿using Sentry;
+﻿using Sentry.Extensibility;
 using Sentry.Protocol;
-using sentry_dotnet_health_addon.Integrations;
+using sentry_dotnet_health_addon.Enums;
 using sentry_dotnet_health_addon.Internals;
 using sentry_dotnet_health_addon.Transport;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace sentry_dotnet_health_addon
 {
     public static class SentrySessionSdk
     {
-        internal static IHealthContainer HealthContainer;
+        internal static ISessionContainer HealthContainer;
 
         internal static SentrySessionOptions Options;
 
         internal static DistinctiveId IdHandler;
 
-        internal static ProccessExitIntegration Integration;
+        internal static Serializer @Serializer;
 
         public static bool IsEnabled => Options != null;
 
@@ -31,20 +29,24 @@ namespace sentry_dotnet_health_addon
         internal static void Init(SentrySessionOptions options)
         {
             if (options.GlobalHubMode)
-                HealthContainer = new HealthContainerGlobal();
+                HealthContainer = new SessionContainerGlobal();
             else
-                HealthContainer = new HealthContainerAsyncLocal();
+                HealthContainer = new SessionContainerAsyncLocal();
             Options = options;
             IdHandler = new DistinctiveId();
-            Integration = new ProccessExitIntegration();
+            @Serializer = new Serializer();
         }
 
         public static void Close()
         {
+            if (IsEnabled)
+            {
+                EndSession();
+            }
             HealthContainer = null;
             Options = null;
             IdHandler = null;
-            Integration.Dispose();
+            @Serializer = null;
         }
 
         public static void StartSession(User user)
@@ -55,11 +57,21 @@ namespace sentry_dotnet_health_addon
         public static void EndSession()
         {
             var session = HealthContainer.GetCurrent();
+            if (session == null || session is DisabledHub || session.Status == SessionState.Exited)
+                return;
             session.End(DateTime.Now);
-            _ = HttpTransport.SendEnvelope(session);
-
+            CaptureSession(session);
         }
 
+        internal static void CaptureSession(ISession session)
+        {
+            var envelope = SentryEnvelope.FromSession(session,
+                new SdkVersion() { Name = "LucasSdk", Version = "1.0.0" },
+                @Serializer);
+            //Todo: SOLVE THIS!!!
+            _ = HttpTransport.Send(envelope, @Serializer);
+
+        }
         private static string ResolveDistinctId(User user)
         {
             if (Options?.DistinctId != null)

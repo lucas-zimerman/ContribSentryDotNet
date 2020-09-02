@@ -1,9 +1,5 @@
 ﻿using Sentry;
 using Sentry.Integrations;
-using sentry_dotnet_health_addon.Integrations;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace sentry_dotnet_health_addon
 {

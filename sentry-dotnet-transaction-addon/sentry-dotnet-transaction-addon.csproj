@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Sentry" Version="2.1.4" />
-    <PackageReference Include="Sentry.Protocol" Version="2.1.5" />
+    <PackageReference Include="Sentry.Protocol" Version="2.1.4" />
   </ItemGroup>
 
 </Project>

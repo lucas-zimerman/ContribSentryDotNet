@@ -120,7 +120,7 @@ namespace sentry_dotnet_health_addon.Internals
         }
 
         /// <summary>
-        /// Ends a session and update its values
+        /// Ends a session and update its values.
         /// </summary>
         /// <param name="timestamp">the timestamp or null</param>
         public void End(DateTime? timestamp)

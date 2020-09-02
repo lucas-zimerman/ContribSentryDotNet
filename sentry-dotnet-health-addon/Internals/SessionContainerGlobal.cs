@@ -1,6 +1,6 @@
 ﻿namespace sentry_dotnet_health_addon.Internals
 {
-    internal class HealthContainerGlobal : IHealthContainer
+    internal class SessionContainerGlobal : ISessionContainer
     {
         internal Session Session;
 
@@ -11,7 +11,13 @@
 
         public Session GetCurrent()
         {
+            System.Console.WriteLine("Estou 3");
             return Session;
+        }
+
+        public void Clear()
+        {
+            Session = null;
         }
     }
 }

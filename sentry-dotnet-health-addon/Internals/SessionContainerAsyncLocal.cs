@@ -2,7 +2,7 @@
 
 namespace sentry_dotnet_health_addon.Internals
 {
-    internal class HealthContainerAsyncLocal : IHealthContainer
+    internal class SessionContainerAsyncLocal : ISessionContainer
     {
         internal AsyncLocal<Session> Sessions = new AsyncLocal<Session>();
         public void CreateNewSession(Session session)
@@ -13,6 +13,11 @@ namespace sentry_dotnet_health_addon.Internals
         public Session GetCurrent()
         {
             return Sessions.Value;
+        }
+
+        public void Clear()
+        {
+            //TODO: Clear AsyncLocal?
         }
     }
 }
