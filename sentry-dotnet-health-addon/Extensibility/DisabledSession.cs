@@ -1,12 +1,9 @@
 ﻿using sentry_dotnet_health_addon.Enums;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
 
 namespace sentry_dotnet_health_addon.Extensibility
 {
-    class DisabledSession : ISession
+    public class DisabledSession : ISession
     {
         public static DisabledSession Instance = new DisabledSession();
         public DateTime? Started { get; private set; }
