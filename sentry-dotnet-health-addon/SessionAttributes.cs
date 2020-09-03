@@ -14,11 +14,11 @@ namespace sentry_dotnet_health_addon
 
         /** the environment */
         [JsonProperty("environment")]
-        internal string Environment { get; private set; }
+        public string Environment { get; private set; }
 
         /** the App's release */
         [JsonProperty("release")]
-        internal string Release { get; private set; }
+        public string Release { get; private set; }
 
         public SessionAttributes(string ipAddress, string userAgent, string environment, string release)
         {

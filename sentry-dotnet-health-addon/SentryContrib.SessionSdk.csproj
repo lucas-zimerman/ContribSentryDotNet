@@ -3,6 +3,16 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>sentry_dotnet_health_addon</RootNamespace>
+    <Authors>Lucas Zimerman</Authors>
+    <Description>Unnoficial Session Addon for Sentry.Net SDK</Description>
+    <PackageProjectUrl>https://github.com/lucas-zimerman/sentry-dotnet-performance-addon</PackageProjectUrl>
+    <PackageIcon>nugget-logo.png</PackageIcon>
+    <RepositoryUrl>https://github.com/lucas-zimerman/sentry-dotnet-performance-addon</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageReleaseNotes>Still in Beta</PackageReleaseNotes>
+    <PackageId>ContribSentry.SessionSdk</PackageId>
+    <Product>ContribSentry.SessionSdk</Product>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>

@@ -6,7 +6,7 @@ using System;
 
 namespace sentry_dotnet_health_addon.Internals
 {
-    internal class Session : ISession
+    public class Session : ISession
     {
         /** started timestamp */
         [JsonProperty("started")]
@@ -123,7 +123,7 @@ namespace sentry_dotnet_health_addon.Internals
         /// Ends a session and update its values.
         /// </summary>
         /// <param name="timestamp">the timestamp or null</param>
-        public void End(DateTime? timestamp)
+        public void End(DateTime? timestamp = null)
         {
             lock (_sessionLock)
             {

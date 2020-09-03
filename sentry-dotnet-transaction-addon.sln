@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testing", "Testing\Testing.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SentryContrib.SessionSdk", "sentry-dotnet-health-addon\SentryContrib.SessionSdk.csproj", "{BD802D38-3F09-4F2D-867B-C94AED25CE84}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SessionSdk.Test", "SessionSdk.Test\SessionSdk.Test.csproj", "{F304CDA6-B501-4A25-94F7-6C1C19FA0DFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{BD802D38-3F09-4F2D-867B-C94AED25CE84}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD802D38-3F09-4F2D-867B-C94AED25CE84}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD802D38-3F09-4F2D-867B-C94AED25CE84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F304CDA6-B501-4A25-94F7-6C1C19FA0DFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F304CDA6-B501-4A25-94F7-6C1C19FA0DFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F304CDA6-B501-4A25-94F7-6C1C19FA0DFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F304CDA6-B501-4A25-94F7-6C1C19FA0DFC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
