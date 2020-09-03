@@ -16,6 +16,7 @@ namespace sentry_dotnet_transaction_addon
 
         [JsonProperty("trace_id")]
         public string TraceId { get; private set; }
+
         #endregion
         public Trace()
         {

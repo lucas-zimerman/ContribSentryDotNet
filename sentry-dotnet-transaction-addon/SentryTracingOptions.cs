@@ -4,14 +4,13 @@ namespace sentry_dotnet_transaction_addon
 {
     public class SentryTracingOptions
     {
-        public SentryTracingOptions(Dsn dsn, double tracesSampleRate = 1.0, bool registerTracingBreadcrumb = true)
+        public SentryTracingOptions(double tracesSampleRate = 1.0, bool registerTracingBreadcrumb = true)
         {
-            Dsn = dsn;
             TracesSampleRate = tracesSampleRate;
             RegisterTracingBreadcrmub = registerTracingBreadcrumb;
         }
 
-        public Dsn Dsn { get; set; }
+        internal Dsn Dsn { get; set; }
         /// <summary>
         /// the rate of sending events where
         /// <para> 1.0 you always send a performance Event.</para> 

@@ -1,52 +1,64 @@
 ﻿using Sentry;
+using sentry_dotnet_transaction_addon.Enums;
+using sentry_dotnet_transaction_addon.Extensibility;
+using sentry_dotnet_transaction_addon.Interface;
+using sentry_dotnet_transaction_addon.Internals;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace sentry_dotnet_transaction_addon
 {
-    public class SentryTracing : ITransactionEvent, IDisposable
+    public class SentryTracing : ISentryTracing
     {
-        public List<Span> Spans { get; private set; }
+        public List<ISpanBase> Spans { get; private set; }
         public DateTimeOffset StartTimestamp { get; private set; }
+        public int TrackerId { get; private set; }
+
 
         internal Trace Trace { get; private set; }
         public string Transaction { get; private set; }
-        public SentryTracing(string name)
+        public SentryTracing(string name, int trackerId)
         {
             Trace = new Trace();
             Transaction = name;
             StartTimestamp = DateTimeOffset.Now;
-            Spans = new List<Span>();
+            TrackerId = trackerId;
+            Spans = new List<ISpanBase>();
         }
 
-        public string Id => Guid.NewGuid().ToString();
-
-        public Span GetSpan(string op)
+        public ISpanBase GetSpan(string op)
         {
             return Spans.FirstOrDefault(s => s.Op == op);
         }
 
-        public Span StartChild(string description, string op = null)
+        public ISpanBase GetCurrentSpan()
         {
-            var span = new Span(description, op);
-            SetTraceToSpan(span);
+            return Spans.LastOrDefault(s => s.Timestamp == s.StartTimestamp && s.ParentSpanId == Trace.SpanId) ?? DisabledSpan.Instance;
+        }
+
+        public ISpanBase StartChild(string description, string op = null)
+        {
+            var span = new Span(Trace.TraceId, Trace.SpanId,  description, op);
+            span.GetParentSpans(Spans);
+            Spans.Add(span);
+            return span;
+        }
+        public ISpanBase StartChild(string url, ESpanRequest requestType)
+        {
+            var span = new Span(Trace.TraceId, Trace.SpanId, url, requestType);
+            span.GetParentSpans(Spans);
             Spans.Add(span);
             return span;
         }
 
-        private void SetTraceToSpan(Span span)
-        {
-            span.TraceId = Trace.TraceId;
-            span.ParentSpanId = Trace.SpanId;
-        }
-
         public void Finish()
         {
-            if (SentryTracingSDK.IsEnabled() && new Random().NextDouble() <= SentryTracingSDK.TracingOptions.TracesSampleRate)
+            if (SentryTracingSdk.IsEnabled() && new Random().NextDouble() <= SentryTracingSdk.TracingOptions.TracesSampleRate)
             {
                 var @event = new SentryTracingEvent(this);
-                if (SentryTracingSDK.TracingOptions.RegisterTracingBreadcrmub)
+                if (SentryTracingSdk.TracingOptions.RegisterTracingBreadcrmub)
                 {
                     SentrySdk.AddBreadcrumb(@event.EventId.ToString(), "sentry.transaction");
                 }
@@ -55,12 +67,17 @@ namespace sentry_dotnet_transaction_addon
                     SentrySdk.CaptureEvent(@event);
                 });
             }
-            SentryTracingSDK.DisposeTracingEvent(this);
+            SentryTracingSdk.DisposeTracingEvent(this);
         }
 
         public void Dispose()
         {
             Finish();
+        }
+
+        public Task IsolateTracking(Func<Task> trackedCode)
+        {
+            return SentryTracingSdk.Tracker.StartCallbackTrackingIdAsync(trackedCode, TrackerId);
         }
     }
 }
