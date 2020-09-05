@@ -2,7 +2,7 @@
 using Sentry.Protocol;
 using System;
 
-namespace sentry_dotnet_health_addon.Internals
+namespace ContribSentry.Internals
 {
     public class SentryEnvelopeHeader
     {

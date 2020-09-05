@@ -1,10 +1,10 @@
 ﻿using Newtonsoft.Json;
 using Sentry.Protocol;
-using sentry_dotnet_health_addon.Enums;
-using sentry_dotnet_health_addon.Extensions;
+using ContribSentry.Enums;
+using ContribSentry.Extensions;
 using System;
 
-namespace sentry_dotnet_health_addon.Internals
+namespace ContribSentry.Internals
 {
     public class Session : ISession
     {
@@ -34,7 +34,7 @@ namespace sentry_dotnet_health_addon.Internals
 
         /** The session state */
         [JsonIgnore]
-        public SessionState Status { get; set; }
+        public ESessionState Status { get; set; }
 
         [JsonProperty("status")]
         internal string _statusJson => Status.ConvertString();
@@ -55,7 +55,7 @@ namespace sentry_dotnet_health_addon.Internals
         internal object _sessionLock = new object();
 
         public Session(
-            SessionState status,
+            ESessionState status,
             DateTime? started,
             DateTime? timestamp,
             int errorCount,
@@ -95,7 +95,7 @@ namespace sentry_dotnet_health_addon.Internals
             string environment,
             string release)
         {
-            Status = SessionState.Ok;
+            Status = ESessionState.Ok;
             Started = DateTime.Now;
             Timestamp = Started;
             ErrorCount = 0;
@@ -130,9 +130,9 @@ namespace sentry_dotnet_health_addon.Internals
                // _init = null;
 
                 // at this state it might be Crashed already, so we don't check for it.
-                if (Status == SessionState.Ok)
+                if (Status == ESessionState.Ok)
                 {
-                    Status = SessionState.Exited;
+                    Status = ESessionState.Exited;
                 }
 
                 if (timestamp != null)
@@ -169,7 +169,7 @@ namespace sentry_dotnet_health_addon.Internals
         /// <param name="userAgent">the userAgent.</param>
         /// <param name="addErrorsCount">true if should increase error count or not.</param>
         /// <returns>true if the session has been updated.</returns>
-        internal bool Update(SessionState? status, string userAgent, bool addErrorsCount)
+        internal bool Update(ESessionState? status, string userAgent, bool addErrorsCount)
         {
             lock (_sessionLock)
             {

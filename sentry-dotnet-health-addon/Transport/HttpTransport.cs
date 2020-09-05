@@ -1,11 +1,11 @@
-﻿using sentry_dotnet_health_addon.Extensions;
-using sentry_dotnet_health_addon.Internals;
+﻿using ContribSentry.Extensions;
+using ContribSentry.Internals;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-namespace sentry_dotnet_health_addon.Transport
+namespace ContribSentry.Transport
 {
     public static class HttpTransport
     {
@@ -17,7 +17,7 @@ namespace sentry_dotnet_health_addon.Transport
             var content = new ByteArrayContent(memoryStream.ToArray());
             memoryStream.Close();
             content.Headers.ContentType = new MediaTypeHeaderValue("application/x-sentry-envelope");
-            var url = SentrySessionSdk.Options.Dsn.GetTracingUrl();
+            var url = ContribSentrySdk.Options.Dsn.GetTracingUrl();
             await Client.PostAsync(url, content);
         }
     }

@@ -1,18 +1,18 @@
-﻿using sentry_dotnet_health_addon.Enums;
+﻿using ContribSentry.Enums;
 
-namespace sentry_dotnet_health_addon.Extensions
+namespace ContribSentry.Extensions
 {
     public static class SessionStateExtensions
     {
-        public static string ConvertString(this SessionState state)
+        public static string ConvertString(this ESessionState state)
         {
-            if (state == SessionState.Ok)
+            if (state == ESessionState.Ok)
                 return "ok";
-            if (state == SessionState.Exited)
+            if (state == ESessionState.Exited)
                 return "exited";
-            if (state == SessionState.Crashed)
+            if (state == ESessionState.Crashed)
                 return "crashed";
-            if( state == SessionState.Abnormal)
+            if( state == ESessionState.Abnormal)
                 return "abnormal";
             return null;
         }

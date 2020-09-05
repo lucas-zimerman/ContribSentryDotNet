@@ -1,8 +1,8 @@
 using Moq;
 using Sentry.Protocol;
-using sentry_dotnet_health_addon;
-using sentry_dotnet_health_addon.Enums;
-using sentry_dotnet_health_addon.Internals;
+using ContribSentry;
+using ContribSentry.Enums;
+using ContribSentry.Internals;
 using System;
 using System.Threading.Tasks;
 using Xunit;
@@ -25,7 +25,7 @@ namespace SessionSdk.Test
             Assert.Equal(Initializer.TestEnvironment, session.Attributes.Environment);
             Assert.Null(session.DistinctId);
             Assert.NotNull(session.Init);
-            Assert.Equal(SessionState.Ok, session.Status);
+            Assert.Equal(ESessionState.Ok, session.Status);
             Assert.NotNull(session.SessionId);
         }
 
@@ -40,7 +40,7 @@ namespace SessionSdk.Test
             var session = CreateSession(user);
             await Task.Delay(10);
             session.End();
-            Assert.Equal(SessionState.Exited, session.Status);
+            Assert.Equal(ESessionState.Exited, session.Status);
             Assert.True(session.Timestamp > session.Started);
         }
 
@@ -53,9 +53,9 @@ namespace SessionSdk.Test
                 IpAddress = "127.0.0.1"
             };
             var session = CreateSession(user);
-            session.Status = SessionState.Crashed;
+            session.Status = ESessionState.Crashed;
             session.End(null);
-            Assert.Equal(SessionState.Crashed, session.Status);
+            Assert.Equal(ESessionState.Crashed, session.Status);
         }
 
         [Fact]

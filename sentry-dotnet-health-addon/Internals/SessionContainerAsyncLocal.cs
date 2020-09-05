@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace sentry_dotnet_health_addon.Internals
+namespace ContribSentry.Internals
 {
     internal class SessionContainerAsyncLocal : ISessionContainer
     {

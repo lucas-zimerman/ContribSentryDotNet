@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\sentry-dotnet-health-addon\ContribSentry.csproj" />
     <ProjectReference Include="..\sentry-dotnet-transaction-addon\sentry-dotnet-transaction-addon.csproj" />
   </ItemGroup>
 

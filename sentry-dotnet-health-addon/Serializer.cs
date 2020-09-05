@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json;
 using Sentry.Protocol;
-using sentry_dotnet_health_addon.Internals;
+using ContribSentry.Internals;
 using System;
 using System.IO;
 using System.Text;
 
-namespace sentry_dotnet_health_addon
+namespace ContribSentry
 {
     public class Serializer
     {
@@ -26,6 +26,13 @@ namespace sentry_dotnet_health_addon
         public void Serialize(ISession session, Stream writer)
         {
             var json = JsonConvert.SerializeObject(session, jsonSettings);
+            writer.Write(utf8.GetBytes(json), 0, json.Length);
+            writer.Flush();
+        }
+
+        public void Serialize(SentryTracingEvent tracing, Stream writer)
+        {
+            var json = JsonConvert.SerializeObject(tracing, jsonSettings);
             writer.Write(utf8.GetBytes(json), 0, json.Length);
             writer.Flush();
         }

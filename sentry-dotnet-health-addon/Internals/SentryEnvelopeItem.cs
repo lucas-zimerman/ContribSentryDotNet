@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
-using sentry_dotnet_health_addon.Enums;
+using ContribSentry.Enums;
 using System.IO;
 
-namespace sentry_dotnet_health_addon.Internals
+namespace ContribSentry.Internals
 {
     public class SentryEnvelopeItem
     {
@@ -25,6 +25,15 @@ namespace sentry_dotnet_health_addon.Internals
             var array = memoryStream.ToArray();
             memoryStream.Close();
             return new SentryEnvelopeItem(new SentryItemType(ESentryType.Session), array);
+        }
+
+        public static SentryEnvelopeItem FromTransaction(SentryTracingEvent tracing, Serializer serializer)
+        {
+            var memoryStream = new MemoryStream();
+            serializer.Serialize(tracing, memoryStream);
+            var array = memoryStream.ToArray();
+            memoryStream.Close();
+            return new SentryEnvelopeItem(new SentryItemType(ESentryType.Transaction), array);
         }
     }
 }

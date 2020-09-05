@@ -1,11 +1,14 @@
 ﻿using Newtonsoft.Json;
-using sentry_dotnet_health_addon.Enums;
-using sentry_dotnet_health_addon.Extensions;
+using ContribSentry.Enums;
+using ContribSentry.Extensions;
 
-namespace sentry_dotnet_health_addon.Internals
+namespace ContribSentry.Internals
 {
     public class SentryItemType
     {
+        /// <summary>
+        /// Type is only used for the json serialization.
+        /// </summary>
         [JsonProperty("type")]
         private string _type => Type.ConvertString();
 

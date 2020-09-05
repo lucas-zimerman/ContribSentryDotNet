@@ -1,6 +1,6 @@
 ﻿using Sentry;
 
-namespace sentry_dotnet_health_addon.Extensions
+namespace ContribSentry.Extensions
 {
     internal static class DsnExtensions
     {

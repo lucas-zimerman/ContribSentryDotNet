@@ -46,7 +46,7 @@ namespace sentry_dotnet_transaction_addon
             TracingOptions = null;
             Tracker = null;
         }
-
+        0
         public static ISentryTracing RetreiveTransactionById(string id)
         {
             lock (_transactionStorage)

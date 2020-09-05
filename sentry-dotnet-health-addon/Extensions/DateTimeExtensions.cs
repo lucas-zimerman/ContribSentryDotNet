@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace sentry_dotnet_health_addon.Extensions
+namespace ContribSentry.Extensions
 {
     internal static class DateTimeExtensions
     {

@@ -1,5 +1,4 @@
-﻿
-namespace sentry_dotnet_health_addon.Internals
+﻿namespace ContribSentry.Internals
 {
     internal interface ISessionContainer
     {

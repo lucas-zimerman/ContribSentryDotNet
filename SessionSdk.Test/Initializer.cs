@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Sentry;
-using sentry_dotnet_health_addon;
+using ContribSentry;
 using SessionSdk.Helpers;
 
 namespace SessionSdk.Test
@@ -13,9 +13,9 @@ namespace SessionSdk.Test
         public const string TestEnvironment = "test";
         public static void Init()
         {
-            if (!SentrySessionSdk.IsEnabled)
+            if (!ContribSentrySdk.IsEnabled)
             {
-                var integration = new SentrySessionSdkIntegration(new SentrySessionOptions() { GlobalHubMode = true });
+                var integration = new ContribSentrySdkIntegration(new ContribSentryOptions() { GlobalSessionMode = true });
                 integration.Register(null, new SentryOptions() { Release = TestRelease, Environment = TestEnvironment, Dsn = new Dsn(DsnHelper.ValidDsnWithoutSecret) });
             }
         }

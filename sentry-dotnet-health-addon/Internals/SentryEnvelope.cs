@@ -2,7 +2,7 @@
 using Sentry.Protocol;
 using System.Collections.Generic;
 
-namespace sentry_dotnet_health_addon.Internals
+namespace ContribSentry.Internals
 {
 
     public class SentryEnvelope
@@ -35,6 +35,12 @@ namespace sentry_dotnet_health_addon.Internals
             Serializer serializer)
         {
             return new SentryEnvelope(SentryId.Empty, sdkVersion, SentryEnvelopeItem.FromSession(session, serializer));
+        }
+
+        public static SentryEnvelope FromTracing(SentryTracingEvent tracing, SdkVersion sdkVersion,
+            Serializer serializer)
+        {
+            return new SentryEnvelope(SentryId.Empty, sdkVersion, SentryEnvelopeItem.FromTransaction(tracing, serializer));
         }
     }
 }

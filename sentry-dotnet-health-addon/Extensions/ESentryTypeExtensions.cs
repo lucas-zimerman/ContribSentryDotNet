@@ -1,9 +1,6 @@
-﻿using sentry_dotnet_health_addon.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using ContribSentry.Enums;
 
-namespace sentry_dotnet_health_addon.Extensions
+namespace ContribSentry.Extensions
 {
     internal static class ESentryTypeExtensions
     {

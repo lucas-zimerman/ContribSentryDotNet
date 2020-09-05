@@ -1,7 +1,7 @@
-﻿using sentry_dotnet_health_addon.Enums;
+﻿using ContribSentry.Enums;
 using System;
 
-namespace sentry_dotnet_health_addon.Extensibility
+namespace ContribSentry.Extensibility
 {
     public class DisabledSession : ISession
     {
@@ -18,7 +18,7 @@ namespace sentry_dotnet_health_addon.Extensibility
 
         public bool? Init { get; private set; }
 
-        public SessionState Status { get; set; }
+        public ESessionState Status { get; set; }
 
         public long? Sequence { get; private set; }
 
