@@ -6,10 +6,8 @@ namespace ContribSentry.Internals
 {
     public class SentryEnvelopeItem
     {
-        [JsonIgnore]
         internal SentryItemType Type {get; private set; }
 
-        [JsonExtensionData]
         internal byte[] Data { get; private set; }
 
         public SentryEnvelopeItem(SentryItemType type, byte[] data)

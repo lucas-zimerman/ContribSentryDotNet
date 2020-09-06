@@ -10,12 +10,13 @@ namespace ContribSentry.Internals
     {
         internal ISessionContainer HealthContainer;
 
+        internal IEndConsumerService EndConsumer;
+
         internal DistinctiveId IdHandler;
+
 
         public void Init(ContribSentryOptions options, IEndConsumerService endConsumer)
         {
-            //endConsumer is ignored because we can access it internaly in ContribSentrySdk
-
             if (options.GlobalSessionMode)
                 HealthContainer = new SessionContainerGlobal();
             else
@@ -23,6 +24,7 @@ namespace ContribSentry.Internals
 
             IdHandler = new DistinctiveId();
 
+            EndConsumer = endConsumer;
         }
 
         public void Close()
@@ -51,7 +53,8 @@ namespace ContribSentry.Internals
             if (session == null || session is DisabledHub || session.Status == ESessionState.Exited)
                 return;
             session.End(DateTime.Now);
-            ContribSentrySdk.EndConsumer.CaptureSession(session);
+            EndConsumer.CaptureSession(session);
+            HealthContainer.Clear();
         }
 
         public ISession GetCurrent() => HealthContainer.GetCurrent();

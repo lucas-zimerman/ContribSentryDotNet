@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ContribSentry.Internals.EventProcessor
 {
-    internal class SentryHealthEventProcessor : ISentryEventProcessor
+    internal class SentrySessionEventProcessor : ISentryEventProcessor
     {
         public SentryEvent Process(SentryEvent @event)
         {

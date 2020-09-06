@@ -11,7 +11,6 @@
 
         public Session GetCurrent()
         {
-            System.Console.WriteLine("Estou 3");
             return Session;
         }
 

@@ -1,5 +1,4 @@
 ﻿using Sentry;
-using sentry_dotnet_transaction_addon;
 using Testing.Helpers;
 
 namespace Testing
