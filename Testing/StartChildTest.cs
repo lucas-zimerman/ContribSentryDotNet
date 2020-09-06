@@ -1,8 +1,8 @@
-using sentry_dotnet_transaction_addon;
-using sentry_dotnet_transaction_addon.Enums;
-using sentry_dotnet_transaction_addon.Extensibility;
-using sentry_dotnet_transaction_addon.Interface;
-using sentry_dotnet_transaction_addon.Internals;
+using ContribSentry;
+using ContribSentry.Enums;
+using ContribSentry.Extensibility;
+using ContribSentry.Interface;
+using ContribSentry.Internals;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -10,97 +10,139 @@ namespace Testing
 {
     public class StartChildTest
     {
+        public IContribSentryTracingService Service;
 
-
-        public StartChildTest()
+        private void SetupService()
         {
-            Initializer.Init();
+            Service = new ContribSentryTracingService();
+            Service.Init(null);
         }
 
-        public ISpanBase AddSpan(string name) => SentryTracingSdk.StartChild(name);
+
+        public ISpanBase AddSpan(string name) => Service.StartChild(name, null);
 
         [Fact]
         public void SentryTracingSdkStartChildWithoutTransactionReturnDisabledSpan()
         {
             new Task(() =>
             {
-                Assert.IsType<DisabledSpan>(AddSpan("_"));
+                try
+                {
+                    SetupService();
+                    Assert.IsType<DisabledSpan>(AddSpan("_"));
+                }
+                finally
+                {
+                    Service = null;
+                }
             }).Start();
         }
 
         [Fact]
         public void SentryTracingSdkStartChildCanDispose()
         {
-            ISentryTracing transaction = SentryTracingSdk.StartTransaction("tran");
-            using (var span = transaction.StartChild("span"))
+            try
             {
-                Task.Delay(100).Wait();
+                SetupService();
+                var transaction = Service.StartTransaction("tran");
+                using (var span = transaction.StartChild("span"))
+                {
+                    Task.Delay(100).Wait();
+                }
+                Assert.NotEqual(transaction.Spans[0].StartTimestamp, transaction.Spans[0].Timestamp);
+                transaction.Finish();
             }
-            Assert.NotEqual(transaction.Spans[0].StartTimestamp, transaction.Spans[0].Timestamp);
-            transaction.Finish();
+            finally
+            {
+                Service = null;
+            }
         }
 
         [Fact]
         public void SentryTracingSdkStartSubChild()
         {
-            ISentryTracing transaction = SentryTracingSdk.StartTransaction("tran");
-            using (var span = transaction.StartChild("span"))
+            try
             {
-                Task.Delay(100).Wait();
-
-                using (var subSpan = span.StartChild("subspan"))
+                SetupService();
+                var transaction = Service.StartTransaction("tran");
+                using (var span = transaction.StartChild("span"))
                 {
                     Task.Delay(100).Wait();
+
+                    using (var subSpan = span.StartChild("subspan"))
+                    {
+                        Task.Delay(100).Wait();
+                    }
                 }
+                Assert.NotEqual(transaction.Spans[0].StartTimestamp, transaction.Spans[0].Timestamp);
+                Assert.NotEqual(transaction.Spans[1].StartTimestamp, transaction.Spans[1].Timestamp);
+                Assert.Equal(transaction.Spans[0].SpanId, transaction.Spans[1].ParentSpanId);
+                transaction.Finish();
             }
-            Assert.NotEqual(transaction.Spans[0].StartTimestamp, transaction.Spans[0].Timestamp);
-            Assert.NotEqual(transaction.Spans[1].StartTimestamp, transaction.Spans[1].Timestamp);
-            Assert.Equal(transaction.Spans[0].SpanId, transaction.Spans[1].ParentSpanId);
-            transaction.Finish();
+            finally
+            {
+                Service = null;
+            }
         }
 
         [Fact]
         public void SentryTracingSdkStartRequestChildOkStatus()
         {
-            ISentryTracing transaction = SentryTracingSdk.StartTransaction("tran");
-            using (var span = transaction.StartChild("span"))
+            try
             {
-                Task.Delay(100).Wait();
-
-                using (var subSpan = span.StartChild("subspan", ESpanRequest.Post))
+                SetupService();
+                var transaction = Service.StartTransaction("tran");
+                using (var span = transaction.StartChild("span"))
                 {
                     Task.Delay(100).Wait();
-                    subSpan.Finish(200);
+
+                    using (var subSpan = span.StartChild("subspan", ESpanRequest.Post))
+                    {
+                        Task.Delay(100).Wait();
+                        subSpan.Finish(200);
+                    }
                 }
+                Assert.NotEqual(transaction.Spans[0].StartTimestamp, transaction.Spans[0].Timestamp);
+                Assert.NotEqual(transaction.Spans[1].StartTimestamp, transaction.Spans[1].Timestamp);
+                Assert.Equal(transaction.Spans[0].SpanId, transaction.Spans[1].ParentSpanId);
+                var statusSpan = transaction.Spans[1] as Span;
+                Assert.Equal("ok", statusSpan.Status);
+                transaction.Finish();
             }
-            Assert.NotEqual(transaction.Spans[0].StartTimestamp, transaction.Spans[0].Timestamp);
-            Assert.NotEqual(transaction.Spans[1].StartTimestamp, transaction.Spans[1].Timestamp);
-            Assert.Equal(transaction.Spans[0].SpanId, transaction.Spans[1].ParentSpanId);
-            var statusSpan = transaction.Spans[1] as Span;
-            Assert.Equal("ok", statusSpan.Status);
-            transaction.Finish();
+            finally
+            {
+                Service = null;
+            }
         }
 
         [Fact]
         public void SentryTracingSdkStartRequestChildErrorStatus()
         {
-            ISentryTracing transaction = SentryTracingSdk.StartTransaction("tran");
-            using (var span = transaction.StartChild("span"))
+            try
             {
-                Task.Delay(100).Wait();
-
-                using (var subSpan = span.StartChild("subspan", ESpanRequest.Post))
+                SetupService();
+                var transaction = Service.StartTransaction("tran");
+                using (var span = transaction.StartChild("span"))
                 {
                     Task.Delay(100).Wait();
-                    subSpan.Finish(500);
+
+                    using (var subSpan = span.StartChild("subspan", ESpanRequest.Post))
+                    {
+                        Task.Delay(100).Wait();
+                        subSpan.Finish(500);
+                    }
                 }
+                Assert.NotEqual(transaction.Spans[0].StartTimestamp, transaction.Spans[0].Timestamp);
+                Assert.NotEqual(transaction.Spans[1].StartTimestamp, transaction.Spans[1].Timestamp);
+                Assert.Equal(transaction.Spans[0].SpanId, transaction.Spans[1].ParentSpanId);
+                var statusSpan = transaction.Spans[1] as Span;
+                Assert.Equal("internal_error", statusSpan.Status);
+                transaction.Finish();
             }
-            Assert.NotEqual(transaction.Spans[0].StartTimestamp, transaction.Spans[0].Timestamp);
-            Assert.NotEqual(transaction.Spans[1].StartTimestamp, transaction.Spans[1].Timestamp);
-            Assert.Equal(transaction.Spans[0].SpanId, transaction.Spans[1].ParentSpanId);
-            var statusSpan = transaction.Spans[1] as Span;
-            Assert.Equal("internal_error", statusSpan.Status);
-            transaction.Finish();
+            finally
+            {
+                Service = null;
+            }
         }
 
     }

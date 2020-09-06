@@ -60,7 +60,8 @@ namespace ContribSentry
         #region Session
         public static void StartSession(User user)
         {
-            SessionService.StartSession(user, Options.DistinctId, Options.Environment, Options.Release);
+            if (IsEnabled)
+                SessionService.StartSession(user, Options.DistinctId, Options.Environment, Options.Release);
         }
 
         public static void EndSession()

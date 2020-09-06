@@ -1,4 +1,4 @@
-﻿using sentry_dotnet_transaction_addon.Internals;
+﻿using ContribSentry.Internals;
 using System;
 using System.Linq;
 using System.Threading;

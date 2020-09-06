@@ -8,6 +8,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContribSentry", "sentry-dot
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContribSentry.SessionTest", "SessionSdk.Test\ContribSentry.SessionTest.csproj", "{F304CDA6-B501-4A25-94F7-6C1C19FA0DFC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContribSentry.Test", "ContribSentry.Test\ContribSentry.Test.csproj", "{7CF822DF-B5E5-4A89-8484-984F8BD147FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{F304CDA6-B501-4A25-94F7-6C1C19FA0DFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F304CDA6-B501-4A25-94F7-6C1C19FA0DFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F304CDA6-B501-4A25-94F7-6C1C19FA0DFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CF822DF-B5E5-4A89-8484-984F8BD147FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CF822DF-B5E5-4A89-8484-984F8BD147FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CF822DF-B5E5-4A89-8484-984F8BD147FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CF822DF-B5E5-4A89-8484-984F8BD147FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
