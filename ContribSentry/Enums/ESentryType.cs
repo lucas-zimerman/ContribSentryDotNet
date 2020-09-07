@@ -1,4 +1,4 @@
-﻿namespace sentry_dotnet_health_addon.Enums
+﻿namespace ContribSentry.Enums
 {
     public enum ESentryType
     {

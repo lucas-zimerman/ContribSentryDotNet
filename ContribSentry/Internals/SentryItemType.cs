@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
-using ContribSentry.Enums;
 using ContribSentry.Extensions;
+using ContribSentry.Enums;
 
 namespace ContribSentry.Internals
 {
