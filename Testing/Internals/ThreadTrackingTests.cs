@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Testing.Internals
+namespace ContribSentry.TracingTest.Internals
 {
     public class ThreadTrackingTests
     {

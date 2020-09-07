@@ -14,8 +14,4 @@
     <PackageReference Include="coverlet.collector" Version="1.2.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\sentry-dotnet-health-addon\ContribSentry.csproj" />
-  </ItemGroup>
-
 </Project>

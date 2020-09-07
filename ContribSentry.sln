@@ -4,9 +4,9 @@ VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContribSentry.TracingTest", "Testing\ContribSentry.TracingTest.csproj", "{9C294F90-9E37-442C-A963-AABFFEE3A66F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContribSentry", "sentry-dotnet-health-addon\ContribSentry.csproj", "{BD802D38-3F09-4F2D-867B-C94AED25CE84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContribSentry", "ContribSentry\ContribSentry.csproj", "{BD802D38-3F09-4F2D-867B-C94AED25CE84}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContribSentry.SessionTest", "SessionSdk.Test\ContribSentry.SessionTest.csproj", "{F304CDA6-B501-4A25-94F7-6C1C19FA0DFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContribSentry.SessionTest", "ContribSentry.SessionTest\ContribSentry.SessionTest.csproj", "{F304CDA6-B501-4A25-94F7-6C1C19FA0DFC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContribSentry.Test", "ContribSentry.Test\ContribSentry.Test.csproj", "{7CF822DF-B5E5-4A89-8484-984F8BD147FC}"
 EndProject

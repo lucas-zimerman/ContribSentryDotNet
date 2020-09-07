@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Testing.UseCasesTests
+namespace ContribSentry.TracingTest.UseCasesTests
 {
     public class SimpleScenarioTests
     {

@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\sentry-dotnet-health-addon\ContribSentry.csproj" />
+    <ProjectReference Include="..\ContribSentry\ContribSentry.csproj" />
   </ItemGroup>
 
 </Project>

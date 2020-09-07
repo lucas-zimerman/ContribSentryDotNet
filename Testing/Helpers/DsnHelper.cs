@@ -1,4 +1,4 @@
-﻿namespace Testing.Helpers
+﻿namespace ContribSentry.TracingTest.Helpers
 {
     /// <summary>
     /// Based on DsnSamples from Sentry.Net

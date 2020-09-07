@@ -1,4 +1,3 @@
-using ContribSentry;
 using ContribSentry.Enums;
 using ContribSentry.Extensibility;
 using ContribSentry.Interface;
@@ -6,7 +5,7 @@ using ContribSentry.Internals;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Testing
+namespace ContribSentry.TracingTest
 {
     public class StartChildTest
     {
