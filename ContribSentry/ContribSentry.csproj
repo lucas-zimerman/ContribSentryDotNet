@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>sentry_dotnet_health_addon</RootNamespace>
+    <Authors>Lucas Zimerman</Authors>
+    <Description>Unnoficial Addons for Sentry.Net Sdk
+-Session support.
+-Transaction Support</Description>
+    <PackageProjectUrl>https://github.com/lucas-zimerman/sentry-dotnet-performance-addon</PackageProjectUrl>
+    <PackageIcon>nugget-logo.png</PackageIcon>
+    <RepositoryUrl>https://github.com/lucas-zimerman/sentry-dotnet-performance-addon</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <PackageId>ContribSentry</PackageId>
+    <Product>ContribSentry.SessionSdk</Product>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Version>3.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include=".Session\ISession.cs" />
+    <Compile Include=".Session\SessionAttributes.cs" />
+    <Compile Include=".Transaction\SentryTracing.cs" />
+    <Compile Include=".Transaction\SentryTracingEvent.cs" />
+    <Compile Include=".Transaction\Span.cs" />
+    <Compile Include=".Transaction\Trace.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Sentry" Version="2.1.4" />
+    <PackageReference Include="Sentry.Protocol" Version="2.1.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Integrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\.assets\nugget-logo.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -1,4 +1,4 @@
-﻿using sentry_dotnet_transaction_addon.Internals;
+﻿using ContribSentry.Internals;
 using System;
 using System.Linq;
 using System.Threading;
@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Testing.Internals
+namespace ContribSentry.TracingTest.Internals
 {
     public class ThreadTrackingTests
     {

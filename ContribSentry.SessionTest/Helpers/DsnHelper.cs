@@ -1,4 +1,4 @@
-﻿namespace ContribSentry.TracingTest.Helpers
+﻿namespace SessionSdk.Helpers
 {
     /// <summary>
     /// Based on DsnSamples from Sentry.Net
