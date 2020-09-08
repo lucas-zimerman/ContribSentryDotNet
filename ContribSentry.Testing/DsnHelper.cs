@@ -1,9 +1,9 @@
-﻿namespace ContribSentry.TracingTest.Helpers
+﻿namespace ContribSentry
 {
     /// <summary>
     /// Based on DsnSamples from Sentry.Net
     /// </summary>
-    public static class DsnHelper
+    public class DsnHelper
     {
         /// <summary>
         /// Sentry has dropped the use of secrets

@@ -1,26 +1,19 @@
-﻿using sentry_dotnet_transaction_addon.Internals;
+﻿using ContribSentry.Internals;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
-using Xunit.Abstractions;
 
-namespace Testing.Internals
+namespace ContribSentry.TracingTest.Internals
 {
     public class ThreadTrackingTests
     {
-        private readonly ITestOutputHelper _testOutputHelper;
-        public ThreadTrackingTests(ITestOutputHelper testOutputHelper)
-        {
-            _testOutputHelper = testOutputHelper;
-        }
-
         private async Task TaskWaiter(int? expectedId, ThreadTracking tracking)
         {
             await Task.Delay(30);
-            Assert.True(tracking.Created);
-            Assert.Equal(expectedId, tracking.Id);
+            Assert.True(tracking.IdRegistered(0));
+            Assert.Equal(expectedId, tracking.GetId());
         }
 
         [Fact]
@@ -30,19 +23,19 @@ namespace Testing.Internals
             var numbers = new int[1000];
             for (int i = 0; i < 300; i++)
             {
-                numbers[i] = ThreadTracking.InternalNewId();
+                numbers[i] = tracker.InternalNewId();
             }
             var task = new Task(() =>
             {
                 new Task(() =>
                 {
                     for (int i = 300; i < 600; i += 2)
-                        numbers[i] = ThreadTracking.InternalNewId();
+                        numbers[i] = tracker.InternalNewId();
                 }).Start();
                 new Task(() =>
                 {
                     for (int i = 301; i < 600; i += 2)
-                        numbers[i] = ThreadTracking.InternalNewId();
+                        numbers[i] = tracker.InternalNewId();
                 }).Start();
             });
             var task2 = new Thread(() =>
@@ -50,12 +43,12 @@ namespace Testing.Internals
                 new Thread(() =>
                 {
                     for (int i = 600; i < 1000; i += 2)
-                        numbers[i] = ThreadTracking.InternalNewId();
+                        numbers[i] = tracker.InternalNewId();
                 }).Start();
                 new Thread(() =>
                 {
                     for (int i = 601; i < 800; i += 2)
-                        numbers[i] = ThreadTracking.InternalNewId();
+                        numbers[i] = tracker.InternalNewId();
                 }).Start();
             });
             task.Start();
@@ -69,9 +62,9 @@ namespace Testing.Internals
         public void ThreadTracking_UnsafeTracking_Not_Created()
         {
             var tracker = new ThreadTracking();
-            var id = tracker.StartUnsafeTrackingId();
-            Assert.False(tracker.Created);
-            Assert.Null(tracker.Id);
+            var id = tracker.InternalNewId();
+            Assert.False(tracker.IdRegistered(0));
+            Assert.Null(tracker.GetId());
         }
 
 
@@ -80,44 +73,44 @@ namespace Testing.Internals
         public async Task ThreadTracking_CreateTrackTask_newTask_ReturnSameId()
         {
             var tracker = new ThreadTracking();
-            await tracker.StartCallbackTrackingIdAsync(async () =>
+            await tracker.WithIsolatedTracing(async () =>
             {
-                Assert.True(tracker.Created);
-                var idEqual = tracker.Id;
+                Assert.True(tracker.IdRegistered(0));
+                var idEqual = tracker.GetId();
                 Task task = new Task(async () =>
                 {
                     await Task.Delay(10);
-                    Assert.True(tracker.Created);
-                    Assert.Equal(idEqual, tracker.Id);
+                    Assert.True(tracker.IdRegistered(0));
+                    Assert.Equal(idEqual, tracker.GetId());
                 });
                 task.Start();
                 await task;
 
-            });
-            Assert.False(tracker.Created);
+            },0);
+            Assert.False(tracker.IdRegistered(0));
         }
 
         [Fact]
         public async Task ThreadTracking_CreateTrackTask_Using_UnsafeId()
         {
             var tracker = new ThreadTracking();
-            var unsafeId = tracker.StartUnsafeTrackingId();
-            await tracker.StartCallbackTrackingIdAsync(async () =>
+            var unsafeId = tracker.InternalNewId();
+            await tracker.WithIsolatedTracing(async () =>
             {
-                Assert.True(tracker.Created);
-                var idEqual = tracker.Id;
+                Assert.True(tracker.IdRegistered(0));
+                var idEqual = tracker.GetId();
                 Task task = new Task(async () =>
                 {
                     await Task.Delay(10);
-                    Assert.True(tracker.Created);
-                    Assert.Equal(idEqual, tracker.Id);
-                    Assert.Equal(unsafeId, tracker.Id);
+                    Assert.True(tracker.IdRegistered(0));
+                    Assert.Equal(idEqual, tracker.GetId());
+                    Assert.Equal(unsafeId, tracker.GetId());
                 });
                 task.Start();
                 await task;
 
             }, unsafeId);
-            Assert.False(tracker.Created);
+            Assert.False(tracker.IdRegistered(0));
         }
 
         [Fact]
@@ -128,42 +121,45 @@ namespace Testing.Internals
             var Semaphores = new Semaphore[3] { new Semaphore(0, 1), new Semaphore(0, 1), new Semaphore(0, 1) };
             new Thread(async () =>
             {
-                await tracker.StartCallbackTrackingIdAsync(async () =>
+                var myId = tracker.InternalNewId();
+                await tracker.WithIsolatedTracing(async () =>
                 {
 
-                    ids[0] = tracker.Id;
+                    ids[0] = tracker.GetId();
                     await TaskWaiter(ids[0], tracker);
-                    Assert.Equal(ids[0], tracker.Id);
+                    Assert.Equal(ids[0], tracker.GetId());
                     Semaphores[0].Release();
-                });
+                }, myId);
             }).Start();
             new Thread(async () =>
             {
-                await tracker.StartCallbackTrackingIdAsync(async () =>
+                var myId = tracker.InternalNewId();
+                await tracker.WithIsolatedTracing(async () =>
                 {
 
-                    ids[1] = tracker.Id;
+                    ids[1] = tracker.GetId();
                     await TaskWaiter(ids[1], tracker);
-                    Assert.Equal(ids[1], tracker.Id);
+                    Assert.Equal(ids[1], tracker.GetId());
                     Semaphores[1].Release();
-                });
+                }, myId);
             }).Start();
             new Thread(async () =>
                 {
-                    await tracker.StartCallbackTrackingIdAsync(async () =>
+                    var myId = tracker.InternalNewId();
+                    await tracker.WithIsolatedTracing(async () =>
                     {
 
-                        ids[2] = tracker.Id;
+                        ids[2] = tracker.GetId();
                         await TaskWaiter(ids[2], tracker);
-                        Assert.Equal(ids[2], tracker.Id);
+                        Assert.Equal(ids[2], tracker.GetId());
                         Semaphores[2].Release();
-                    });
+                    }, myId);
                 }).Start();
             Semaphores[0].WaitOne();
             Semaphores[1].WaitOne();
             Semaphores[2].WaitOne();
 
-            Assert.False(tracker.Created);
+            Assert.False(tracker.IdRegistered(0));
             Assert.NotNull(ids[0]);
             Assert.NotNull(ids[1]);
             Assert.NotNull(ids[2]);
@@ -178,10 +174,10 @@ namespace Testing.Internals
             bool receivedError = false;
             try
             {
-                await tracker.StartCallbackTrackingIdAsync(() =>
+                await tracker.WithIsolatedTracing(() =>
                 {
                     throw new Exception(".");
-                });
+                },0);
             }
             catch
             {
