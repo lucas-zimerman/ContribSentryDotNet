@@ -52,7 +52,7 @@ namespace ContribSentry.Internals
             var session = HealthContainer.GetCurrent();
             if (session == null || session is DisabledHub || session.Status == ESessionState.Exited)
                 return;
-            session.End(DateTime.Now);
+            session.End(DateTime.UtcNow);
             EndConsumer.CaptureSession(session);
             HealthContainer.Clear();
         }

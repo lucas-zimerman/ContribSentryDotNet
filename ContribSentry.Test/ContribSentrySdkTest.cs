@@ -112,6 +112,38 @@ namespace ContribSentry.Test
         }
 
         [Fact]
+        public void Custom_TrackingId_Is_Set_When_Sdk_Initialized()
+        {
+            try
+            {
+                ContribSentrySdk.Init(new ContribSentryOptions() { TrackingIdMethod = new MockThreadTracking() });
+                Assert.Equal(typeof(ContribSentryTracingService), ContribSentrySdk.TracingService.GetType());
+                var service = (ContribSentryTracingService)ContribSentrySdk.TracingService;
+                Assert.Equal(typeof(MockThreadTracking), service.Tracker.GetType());
+            }
+            finally
+            {
+                ContribSentrySdk.Close();
+            }
+        }
+
+        [Fact]
+        public void ThreadTracking_Is_Set_When_Sdk_Initialized_And_No_Custom_TrackingId_Is_Set()
+        {
+            try
+            {
+                ContribSentrySdk.Init(new ContribSentryOptions());
+                Assert.Equal(typeof(ContribSentryTracingService), ContribSentrySdk.TracingService.GetType());
+                var service = (ContribSentryTracingService)ContribSentrySdk.TracingService;
+                Assert.Equal(typeof(ThreadTracking), service.Tracker.GetType());
+            }
+            finally
+            {
+                ContribSentrySdk.Close();
+            }
+        }
+
+        [Fact]
         public void Sdk_Disabled_Start_Session_Does_Not_Crash()
         {
             ContribSentrySdk.StartSession(null);

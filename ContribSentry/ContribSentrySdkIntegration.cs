@@ -23,11 +23,11 @@ namespace ContribSentry
             _options.Environment = options.Environment;
             _options.Release = options.Release;            
             ContribSentrySdk.Init(_options);
-            _options = null;
             if (_options.SessionEnabled) 
                 options.AddEventProcessor(new SentrySessionEventProcessor());
             if(_options.TransactionEnabled)
                 options.AddEventProcessor(new SentryTracingEventProcessor());
+            _options = null;
         }
     }
 }

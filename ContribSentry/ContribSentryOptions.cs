@@ -77,5 +77,11 @@ namespace ContribSentry
         {
             SessionService = service;
         }
+
+
+        /// <summary>
+        /// Akkiws to Inject a custom TracingContext that another project requested.
+        /// </summary>
+        internal ITracingContextTrackingId TrackingIdMethod { get; set; }
     }
 }

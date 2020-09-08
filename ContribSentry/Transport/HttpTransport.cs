@@ -20,5 +20,6 @@ namespace ContribSentry.Transport
             var url = ContribSentrySdk.Options.Dsn.GetTracingUrl();
             await Client.PostAsync(url, content);
         }
+
     }
 }

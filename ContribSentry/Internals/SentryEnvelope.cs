@@ -40,7 +40,7 @@ namespace ContribSentry.Internals
         public static SentryEnvelope FromTracing(SentryTracingEvent tracing, SdkVersion sdkVersion,
             Serializer serializer)
         {
-            return new SentryEnvelope(SentryId.Empty, sdkVersion, SentryEnvelopeItem.FromTransaction(tracing, serializer));
+            return new SentryEnvelope(tracing.EventId, sdkVersion, SentryEnvelopeItem.FromTransaction(tracing, serializer));
         }
     }
 }
