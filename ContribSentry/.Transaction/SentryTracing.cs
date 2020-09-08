@@ -60,7 +60,7 @@ namespace ContribSentry
             if (ContribSentrySdk.IsTracingSdkEnabled && new Random().NextDouble() <= ContribSentrySdk.Options.TracesSampleRate)
             {
                 var @event = new SentryTracingEvent(this);
-                if (ContribSentrySdk.Options.RegisterTracingBreadcrmub)
+                if (ContribSentrySdk.Options.RegisterTracingBreadcrumb)
                 {
                     SentrySdk.AddBreadcrumb(@event.EventId.ToString(), "sentry.transaction");
                 }

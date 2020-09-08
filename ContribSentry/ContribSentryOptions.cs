@@ -8,7 +8,7 @@ namespace ContribSentry
     {
         internal static readonly double TracesSampleRateDefault = 1.0;
 
-        internal static readonly bool RegisterTracingBreadcrumb = true;
+        internal static readonly bool RegisterTracingBreadcrumbDefault = true;
 
         public ContribSentryOptions(bool transactionEnable = true, bool sessionEnable = true)
         {
@@ -16,7 +16,7 @@ namespace ContribSentry
             if (TransactionEnabled)
             {
                 TracesSampleRate = TracesSampleRateDefault;
-                RegisterTracingBreadcrmub = RegisterTracingBreadcrumb;
+                RegisterTracingBreadcrumb = RegisterTracingBreadcrumbDefault;
             }
             SessionEnabled = sessionEnable;
 
@@ -52,7 +52,7 @@ namespace ContribSentry
         /// When set to true, it'll always register a breadcrumb with
         /// <br>the given tracing event Id if the event is sent to Sentry</br>
         /// </summary>
-        public bool RegisterTracingBreadcrmub { get; set; }
+        public bool RegisterTracingBreadcrumb { get; set; }
 
         internal SdkVersion ContribSdk { get; set; }
 

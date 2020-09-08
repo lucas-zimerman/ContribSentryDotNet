@@ -18,7 +18,7 @@ namespace ContribSentry.AspNetCore
             _options = new ContribSentryOptions(options.TransactionEnabled, false)
             {
                 DistinctId = options.DistinctId,
-                RegisterTracingBreadcrmub = options.RegisterTracingBreadcrmub,
+                RegisterTracingBreadcrumb = options.RegisterTracingBreadcrumb,
                 TracesSampleRate = options.TracesSampleRate,
             };
             _options.SetTracingService(options.TracingService);
