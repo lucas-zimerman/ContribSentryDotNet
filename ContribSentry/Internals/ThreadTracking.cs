@@ -51,17 +51,9 @@ namespace ContribSentry.Internals
 
         public async Task WithIsolatedTracing(Func<Task> test, int id)
         {
-            if (_tracingIds.Value != null)
-            {
-                return;
-            }
-
             _tracingIds.Value = id;
             await test().ConfigureAwait(false);
             _tracingIds.Value = null;
         }
-
-        public int? Id => _tracingIds.Value;
-
     }
 }

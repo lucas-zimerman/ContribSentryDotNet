@@ -64,6 +64,7 @@ namespace ContribSentry.Internals
         {
             lock (_transactionStorage)
             {
+                Tracker.UnsetId(tracing.TrackerId);
                 _transactionStorage.Remove(_transactionStorage.First(p => p.Value.Equals(tracing)));
             }
         }

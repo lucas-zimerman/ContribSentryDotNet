@@ -10,13 +10,16 @@ namespace ContribSentry.Internals
         ///Event Id must be set if the envelope holds an event, or an item that is related to the event.<br/>
         /// (e.g: attachments, user feedback)
         /// </summary>
-        [JsonProperty("eventId")]
+        [JsonProperty("event_id")]
+        private string _eventIdString => EventId.Equals(SentryId.Empty) ? null : EventId.ToString();
+
+        [JsonIgnore]
         public SentryId EventId { get; private set; }
 
-        [JsonProperty("sdkVersion")]
+        [JsonProperty("sdk")]
         public SdkVersion SdkVersion { get; private set; }
         
-        [JsonProperty("sentAt")]
+        [JsonProperty("sent_at")]
         public string SentAt { get; private set; }
 
         internal SentryEnvelopeHeader(SentryId eventId, SdkVersion version)

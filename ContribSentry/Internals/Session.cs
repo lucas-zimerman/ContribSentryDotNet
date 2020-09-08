@@ -96,7 +96,7 @@ namespace ContribSentry.Internals
             string release)
         {
             Status = ESessionState.Ok;
-            Started = DateTime.Now;
+            Started = DateTime.UtcNow;
             Timestamp = Started;
             ErrorCount = 0;
             DistinctId = distinctId;
@@ -141,7 +141,7 @@ namespace ContribSentry.Internals
                 }
                 else
                 {
-                    Timestamp = DateTime.Now;
+                    Timestamp = DateTime.UtcNow;
                 }
 
                 if (timestamp != null)
@@ -194,7 +194,7 @@ namespace ContribSentry.Internals
                 if (sessionHasBeenUpdated)
                 {
                     Init = null;
-                    Timestamp = DateTime.Now;
+                    Timestamp = DateTime.UtcNow;
                     if (Timestamp != null)
                     {
                         Sequence = GetSequenceTimestamp(Timestamp.Value);

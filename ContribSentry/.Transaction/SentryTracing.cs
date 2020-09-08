@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace ContribSentry
 {
@@ -14,6 +15,8 @@ namespace ContribSentry
     {
         public List<ISpanBase> Spans { get; private set; }
         public DateTimeOffset StartTimestamp { get; private set; }
+
+        [JsonIgnore]
         public int TrackerId { get; private set; }
 
         internal Trace Trace { get; private set; }
@@ -21,9 +24,9 @@ namespace ContribSentry
         public SentryTracing(string name, int trackerId)
         {
             Trace = new Trace();
-            Transaction = name;
-            StartTimestamp = DateTimeOffset.Now;
             TrackerId = trackerId;
+            Transaction = name;
+            StartTimestamp = DateTimeOffset.UtcNow;
             Spans = new List<ISpanBase>();
         }
 

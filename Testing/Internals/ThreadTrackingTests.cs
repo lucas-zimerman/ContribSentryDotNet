@@ -13,7 +13,7 @@ namespace ContribSentry.TracingTest.Internals
         {
             await Task.Delay(30);
             Assert.True(tracking.IdRegistered(0));
-            Assert.Equal(expectedId, tracking.Id);
+            Assert.Equal(expectedId, tracking.GetId());
         }
 
         [Fact]
@@ -64,7 +64,7 @@ namespace ContribSentry.TracingTest.Internals
             var tracker = new ThreadTracking();
             var id = tracker.InternalNewId();
             Assert.False(tracker.IdRegistered(0));
-            Assert.Null(tracker.Id);
+            Assert.Null(tracker.GetId());
         }
 
 
@@ -76,12 +76,12 @@ namespace ContribSentry.TracingTest.Internals
             await tracker.WithIsolatedTracing(async () =>
             {
                 Assert.True(tracker.IdRegistered(0));
-                var idEqual = tracker.Id;
+                var idEqual = tracker.GetId();
                 Task task = new Task(async () =>
                 {
                     await Task.Delay(10);
                     Assert.True(tracker.IdRegistered(0));
-                    Assert.Equal(idEqual, tracker.Id);
+                    Assert.Equal(idEqual, tracker.GetId());
                 });
                 task.Start();
                 await task;
@@ -98,13 +98,13 @@ namespace ContribSentry.TracingTest.Internals
             await tracker.WithIsolatedTracing(async () =>
             {
                 Assert.True(tracker.IdRegistered(0));
-                var idEqual = tracker.Id;
+                var idEqual = tracker.GetId();
                 Task task = new Task(async () =>
                 {
                     await Task.Delay(10);
                     Assert.True(tracker.IdRegistered(0));
-                    Assert.Equal(idEqual, tracker.Id);
-                    Assert.Equal(unsafeId, tracker.Id);
+                    Assert.Equal(idEqual, tracker.GetId());
+                    Assert.Equal(unsafeId, tracker.GetId());
                 });
                 task.Start();
                 await task;
@@ -125,9 +125,9 @@ namespace ContribSentry.TracingTest.Internals
                 await tracker.WithIsolatedTracing(async () =>
                 {
 
-                    ids[0] = tracker.Id;
+                    ids[0] = tracker.GetId();
                     await TaskWaiter(ids[0], tracker);
-                    Assert.Equal(ids[0], tracker.Id);
+                    Assert.Equal(ids[0], tracker.GetId());
                     Semaphores[0].Release();
                 }, myId);
             }).Start();
@@ -137,9 +137,9 @@ namespace ContribSentry.TracingTest.Internals
                 await tracker.WithIsolatedTracing(async () =>
                 {
 
-                    ids[1] = tracker.Id;
+                    ids[1] = tracker.GetId();
                     await TaskWaiter(ids[1], tracker);
-                    Assert.Equal(ids[1], tracker.Id);
+                    Assert.Equal(ids[1], tracker.GetId());
                     Semaphores[1].Release();
                 }, myId);
             }).Start();
@@ -149,9 +149,9 @@ namespace ContribSentry.TracingTest.Internals
                     await tracker.WithIsolatedTracing(async () =>
                     {
 
-                        ids[2] = tracker.Id;
+                        ids[2] = tracker.GetId();
                         await TaskWaiter(ids[2], tracker);
-                        Assert.Equal(ids[2], tracker.Id);
+                        Assert.Equal(ids[2], tracker.GetId());
                         Semaphores[2].Release();
                     }, myId);
                 }).Start();

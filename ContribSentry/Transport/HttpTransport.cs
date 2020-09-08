@@ -18,7 +18,8 @@ namespace ContribSentry.Transport
             memoryStream.Close();
             content.Headers.ContentType = new MediaTypeHeaderValue("application/x-sentry-envelope");
             var url = ContribSentrySdk.Options.Dsn.GetTracingUrl();
-            var dd = await Client.PostAsync(url, content);
+            await Client.PostAsync(url, content);
         }
+
     }
 }

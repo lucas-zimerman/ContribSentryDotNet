@@ -50,7 +50,7 @@ namespace ContribSentry
         #endregion
         public Span(string traceId, string spanId, string description, string op = null)
         {
-            StartTimestamp = DateTimeOffset.Now;
+            StartTimestamp = DateTimeOffset.UtcNow;
             Timestamp = StartTimestamp; //In case of not closing the equal time will indicate a problem.
             Description = description;
             Op = op ?? description;
@@ -61,7 +61,7 @@ namespace ContribSentry
 
         public Span(string traceId, string spanId, string url, ESpanRequest requestType)
         {
-            StartTimestamp = DateTimeOffset.Now;
+            StartTimestamp = DateTimeOffset.UtcNow;
             Timestamp = StartTimestamp; //In case of not closing the equal time will indicate a problem.
             Description = url;
             Op = requestType.ToString().ToUpper();
@@ -92,7 +92,7 @@ namespace ContribSentry
             if (_isRequest)
                 Finish(null);
             else
-                Timestamp = DateTimeOffset.Now;
+                Timestamp = DateTimeOffset.UtcNow;
         }
 
         public void Finish(int? httpCode)
@@ -101,7 +101,7 @@ namespace ContribSentry
             {
                 _finished = true;
                 Status = SpanStatus.SpanStatusDictionary[SpanStatus.FromHttpStatusCode(httpCode)];
-                Timestamp = DateTimeOffset.Now;
+                Timestamp = DateTimeOffset.UtcNow;
             }
         }
 

@@ -19,7 +19,7 @@ namespace ContribSentry.Internals.EventProcessor
                 if (session != null && @event.SentryExceptions.Any(e => e.Mechanism?.Handled == false))
                 {
                     //crash, must close the session
-                    session.End(DateTime.Now);
+                    session.End(DateTime.UtcNow);
                     session.Status = ESessionState.Crashed;
                     ContribSentrySdk.EndConsumer.CaptureSession(session);
                 }
