@@ -37,7 +37,7 @@ namespace ContribSentry
                 }
                 if (IsTracingSdkEnabled)
                 {
-                    TracingService = Options.TracingService ?? new ContribSentryTracingService();
+                    TracingService = Options.TracingService ?? new ContribSentryTracingService(Options.TrackingIdMethod);
                     TracingService.Init(Options);
                 }
             }

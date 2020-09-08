@@ -12,11 +12,15 @@ namespace ContribSentry.Internals
     {
         internal List<KeyValuePair<int?, SentryTracing>> _transactionStorage = new List<KeyValuePair<int?, SentryTracing>>();
 
-        internal ThreadTracking Tracker;
+        internal ITracingContextTrackingId Tracker;
+
+        internal ContribSentryTracingService(ITracingContextTrackingId tracker)
+        {
+            Tracker = tracker ?? new ThreadTracking();
+        }
 
         public void Init(ContribSentryOptions options)
         {
-            Tracker = new ThreadTracking();
         }
 
         public void Close()
@@ -44,9 +48,9 @@ namespace ContribSentry.Internals
         {
             lock (_transactionStorage)
             {
-                if (_transactionStorage.Count() == 0 || !Tracker.Created)
+                if (_transactionStorage.Count() == 0)
                     return DisabledTracing.Instance;
-                var id = Tracker.Id;
+                var id = Tracker.GetId();
                 var keyPair = _transactionStorage.LastOrDefault(p => p.Key == id);
                 return keyPair.Value ?? (ISentryTracing)DisabledTracing.Instance;
             }
@@ -66,8 +70,9 @@ namespace ContribSentry.Internals
 
         public ISentryTracing StartTransaction(string name)
         {
-            var id = Tracker.StartUnsafeTrackingId();
+            var id = Tracker.ReserveNewId();
             var tracing = new SentryTracing(name, id);
+            Tracker.AssociateId(id);
             lock (_transactionStorage)
             {
                 _transactionStorage.Add(new KeyValuePair<int?, SentryTracing>(id, tracing));
@@ -100,7 +105,8 @@ namespace ContribSentry.Internals
 
         public Task StartCallbackTrackingIdAsync(Func<Task> test, int? unsafeId)
         {
-            return Tracker.StartCallbackTrackingIdAsync(test, unsafeId);
+
+            return Tracker.WithIsolatedTracing(test, unsafeId.Value);
         }
     }
 }

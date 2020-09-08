@@ -14,7 +14,7 @@ namespace ContribSentry.TracingTest.UseCasesTests
 
         private void SetupService()
         {
-            Service = new ContribSentryTracingService();
+            Service = new ContribSentryTracingService(null);
             Service.Init(null);
         }
 

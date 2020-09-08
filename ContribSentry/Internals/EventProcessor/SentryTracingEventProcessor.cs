@@ -9,6 +9,7 @@ namespace ContribSentry.Internals.EventProcessor
         {
             if (@event is SentryTracingEvent performanceEvent)
             {
+
                 ContribSentrySdk.EndConsumer.CaptureTracing(performanceEvent);
                 return null;
             }
