@@ -138,17 +138,15 @@ namespace ContribSentry.Internals
                 if (timestamp != null)
                 {
                     Timestamp = timestamp;
+
+                    Duration = CalculateDurationTime(Timestamp.Value);
+                    Sequence = GetSequenceTimestamp(Timestamp.Value);
                 }
                 else
                 {
                     Timestamp = DateTime.UtcNow;
                 }
 
-                if (timestamp != null)
-                {
-                    Duration = CalculateDurationTime(Timestamp.Value);
-                    Sequence = GetSequenceTimestamp(Timestamp.Value);
-                }
             }
         }
 

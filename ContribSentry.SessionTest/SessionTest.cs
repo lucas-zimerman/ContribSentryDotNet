@@ -26,7 +26,7 @@ namespace SessionSdk.Test
             Assert.Null(session.DistinctId);
             Assert.NotNull(session.Init);
             Assert.Equal(ESessionState.Ok, session.Status);
-            Assert.NotNull(session.SessionId);
+            Assert.NotEqual(Guid.Empty, session.SessionId);
         }
 
         [Fact]

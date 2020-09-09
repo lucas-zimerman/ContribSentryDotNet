@@ -1,5 +1,6 @@
 ﻿using ContribSentry.Extensibility;
 using ContribSentry.Interface;
+using ContribSentry.Internals;
 using ContribSentry.Internals.EventProcessor;
 using Moq;
 using Sentry;
@@ -68,6 +69,43 @@ namespace ContribSentry.SessionTest.Internals.EventProcessor
                 var processor = new SentrySessionEventProcessor();
                 processor.Process(@event);
                 Assert.True(evt.WaitOne(1000));
+            }
+            finally
+            {
+                ContribSentrySdk.SessionService = null;
+                ContribSentrySdk.EndConsumer = null;
+            }
+        }
+
+        [Fact]
+        public void Fatal_Event_Not_Handled_Should_Set_Duration_Of_Opened_Session()
+        {
+            try
+            {
+                var evt = new ManualResetEvent(false);
+                var mockedSession = new Session("1", new User() { }, "1", "1");
+
+                var mock = new Mock<IContribSentrySessionService>();
+                mock.Setup(p => p.GetCurrent()).Returns(mockedSession);
+                ContribSentrySdk.SessionService = mock.Object;
+
+                var mock2 = new Mock<IEndConsumerService>();
+                mock2.Setup(p => p.CaptureSession(It.IsAny<ISession>())).Callback(() => evt.Set());
+                ContribSentrySdk.EndConsumer = mock2.Object;
+
+                var @event = new SentryEvent();
+                @event.Level = SentryLevel.Fatal;
+                @event.SentryExceptions = new List<SentryException>()
+                {
+                    new SentryException(){Mechanism = new Mechanism(){ Handled = false}}
+                };
+                var processor = new SentrySessionEventProcessor();
+                //Little time so Duration will not be zero. (must be greater than 1 second
+                Thread.Sleep(1200);
+                processor.Process(@event);
+                Assert.True(evt.WaitOne(1000));
+                Assert.NotNull(mockedSession.Duration);
+                Assert.True(mockedSession.Duration > 0);
             }
             finally
             {
