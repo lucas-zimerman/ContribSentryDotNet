@@ -4,6 +4,7 @@ using ContribSentry.Internals;
 using System;
 using System.IO;
 using System.Text;
+using Sentry;
 
 namespace ContribSentry
 {
@@ -26,6 +27,13 @@ namespace ContribSentry
         public void Serialize(ISession session, Stream writer)
         {
             var json = JsonConvert.SerializeObject(session, jsonSettings);
+            CopyBytesByKb(utf8.GetBytes(json), writer);
+            writer.Flush();
+        }
+
+        public void Serialize(SentryEvent @event, Stream writer)
+        {
+            var json = JsonConvert.SerializeObject(@event, jsonSettings);
             CopyBytesByKb(utf8.GetBytes(json), writer);
             writer.Flush();
         }

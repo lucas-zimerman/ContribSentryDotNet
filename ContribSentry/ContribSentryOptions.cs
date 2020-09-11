@@ -1,6 +1,8 @@
 ﻿using ContribSentry.Interface;
 using Sentry;
+using Sentry.Extensibility;
 using Sentry.Protocol;
+using System;
 
 namespace ContribSentry
 {
@@ -10,7 +12,9 @@ namespace ContribSentry
 
         internal static readonly bool RegisterTracingBreadcrumbDefault = true;
 
-        public ContribSentryOptions(bool transactionEnable = true, bool sessionEnable = true)
+        internal static readonly int CacheDirSizeDefault = 100;
+
+        public ContribSentryOptions(bool transactionEnable = true, bool sessionEnable = true, bool cacheEnable = false)
         {
             TransactionEnabled = transactionEnable;
             if (TransactionEnabled)
@@ -20,9 +24,28 @@ namespace ContribSentry
             }
             SessionEnabled = sessionEnable;
 
-            ContribSdk = new SdkVersion() { Name = "ContribSentry", Version = "3.0.0" };
+            CacheEnabled = cacheEnable;
+            CacheDirSize = CacheDirSizeDefault;
+
+            ContribSdk = new SdkVersion() { Name = "ContribSentry", Version = "3.0.1" };
         }
 
+        internal void ConsumeSentryOptions(SentryOptions options)
+        {
+            Dsn = options.Dsn;
+            Environment = options.Environment;
+            Release = options.Release;
+            BeforeSend = options.BeforeSend;
+            DiagnosticLogger = options.DiagnosticLogger;
+
+        }
+
+        internal void DisableCache()
+        {
+            CacheEnabled = false;
+        }
+
+        internal IDiagnosticLogger DiagnosticLogger { get; private set; }
         internal Dsn Dsn { get; set; }
         internal string Environment { get; set; }
         internal string Release { get; set; }
@@ -30,7 +53,7 @@ namespace ContribSentry
         
         public bool TransactionEnabled { get; private set; }
         public bool SessionEnabled { get; private set; }
-
+        public bool CacheEnabled { get; private set; }
         /// <summary>
         /// True for single user applications like Apps, Otherwise, False.
         /// </summary>
@@ -54,10 +77,20 @@ namespace ContribSentry
         /// </summary>
         public bool RegisterTracingBreadcrumb { get; set; }
 
+        public string CacheDirPath { get; set; }
+
+        public int CacheDirSize { get; set; }
+
+        internal Func<bool> HasInternet { get; private set; }
+
         internal SdkVersion ContribSdk { get; set; }
 
         public IContribSentryTracingService TracingService { get; private set; }
         public IContribSentrySessionService SessionService { get; private set; }
+
+        public IEnvelopeCache EnvelopeCache { get; private set; }
+
+        public IEventCache EventCache { get; private set; }
 
         /// <summary>
         /// Allows to Inject a custom Tracing Service, must be set before SentrySdk.Init<br/>
@@ -68,6 +101,7 @@ namespace ContribSentry
         {
             TracingService = service;
         }
+
         /// <summary>
         /// Allows to Inject a custom Session Service, must be set before SentrySdk.Init<br/>
         /// is called.
@@ -78,10 +112,30 @@ namespace ContribSentry
             SessionService = service;
         }
 
+        /// <summary>
+        /// Used to know if ContribSentry should cache or not SentryEvents since<br/.
+        /// it act as a middleware.
+        /// </summary>
+        /// <param name="hasInternet">the call that should return if the application has internet or not.</param>
+        public void SetHasInternetCallback(Func<bool> hasInternet)
+        {
+            HasInternet = hasInternet;
+        }
 
         /// <summary>
-        /// Akkiws to Inject a custom TracingContext that another project requested.
+        /// Tries to Inject a custom TracingContext that another project requested.
         /// </summary>
         internal ITracingContextTrackingId TrackingIdMethod { get; set; }
+
+        /// <summary>
+        ///     A callback to invoke before sending an event to Sentry
+        /// </summary>
+        /// <Remarks>
+        ///     The return of this event will be sent to Sentry. This allows the application
+        ///     a chance to inspect and/or modify the event before it's sent. If the event should
+        ///     not be sent at all, return null from the callback.
+        /// </Remarks>
+        internal Func<SentryEvent, SentryEvent> BeforeSend { get; set; }
+
     }
 }

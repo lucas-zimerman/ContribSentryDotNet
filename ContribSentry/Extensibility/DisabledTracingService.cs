@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ContribSentry.Extensibility
 {
-    class DisabledTracingService : IContribSentryTracingService
+    public class DisabledTracingService : IContribSentryTracingService
     {
-        internal static DisabledTracingService Instance = new DisabledTracingService();
+        public static DisabledTracingService Instance = new DisabledTracingService();
         public void Close() { }
 
         public void DisposeTracingEvent(SentryTracing tracing) { }

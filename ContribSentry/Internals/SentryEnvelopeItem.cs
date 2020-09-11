@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using ContribSentry.Enums;
+﻿using ContribSentry.Enums;
 using System.IO;
 
 namespace ContribSentry.Internals
