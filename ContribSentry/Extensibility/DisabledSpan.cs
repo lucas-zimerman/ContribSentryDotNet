@@ -8,7 +8,7 @@ namespace ContribSentry.Extensibility
     public partial class DisabledSpan : ISpanBase
     {
 
-        internal static DisabledSpan Instance = new DisabledSpan(null, null);
+        public static DisabledSpan Instance = new DisabledSpan(null, null);
 
         public DisabledSpan(string description, string op = null) { }
 

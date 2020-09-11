@@ -19,14 +19,15 @@ namespace ContribSentry
 
         public void Register(IHub hub, SentryOptions options)
         {
-            _options.Dsn = options.Dsn;
-            _options.Environment = options.Environment;
-            _options.Release = options.Release;            
+            _options.ConsumeSentryOptions(options);
             ContribSentrySdk.Init(_options);
+
             if (_options.SessionEnabled) 
                 options.AddEventProcessor(new SentrySessionEventProcessor());
             if(_options.TransactionEnabled)
                 options.AddEventProcessor(new SentryTracingEventProcessor());
+            if (_options.CacheEnabled)
+                options.AddEventProcessor(new SentryOfflineEventProcessor());
             _options = null;
         }
     }

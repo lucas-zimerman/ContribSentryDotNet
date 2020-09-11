@@ -1,10 +1,12 @@
-﻿using ContribSentry.Internals;
+﻿using ContribSentry.Cache;
+using System.Collections.Generic;
 
 namespace ContribSentry.Interface
 {
-    interface IEnvelopeCache
+    public interface IEnvelopeCache
     {
-        void Store(SentryEnvelope envelope);
-        void Discard(SentryEnvelope envelope);
+        void Store(CachedSentryData envelope);
+        void Discard(CachedSentryData envelope);
+        List<CachedSentryData> Iterator();
     }
 }

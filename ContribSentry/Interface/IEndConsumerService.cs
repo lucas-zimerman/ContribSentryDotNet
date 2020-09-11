@@ -1,4 +1,5 @@
-﻿using ContribSentry;
+﻿using ContribSentry.Cache;
+using System.Threading.Tasks;
 
 namespace ContribSentry.Interface
 {
@@ -9,5 +10,6 @@ namespace ContribSentry.Interface
     {
         void CaptureTracing(SentryTracingEvent tracing);
         void CaptureSession(ISession session);
+        Task<bool> CaptureCachedEnvelope(CachedSentryData envelope);
     }
 }

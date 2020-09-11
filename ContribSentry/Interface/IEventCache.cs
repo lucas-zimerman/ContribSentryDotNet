@@ -1,7 +1,6 @@
-﻿using Sentry;
-using System;
+﻿using ContribSentry.Cache;
+using Sentry;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ContribSentry.Interface
 {
@@ -28,5 +27,8 @@ namespace ContribSentry.Interface
         /// </summary>
         /// <param name="event">the event to discard from storage</param>
         void Discard(SentryEvent @event);
+        void Discard(CachedSentryData @event);
+
+        List<CachedSentryData> Iterator();
     }
 }

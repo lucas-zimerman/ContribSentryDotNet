@@ -1,5 +1,7 @@
-﻿using ContribSentry.Interface;
+﻿using ContribSentry.Enums;
+using ContribSentry.Interface;
 using Sentry;
+using Sentry.Protocol;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,9 +31,9 @@ namespace ContribSentry.Cache
 
         internal DiskCache(ContribSentryOptions options)
         {
-            _directory = options.GetCacheDirPath();
-            _maxSize = options.GetCacheDirSize();
-            _serializer = options.GetSerializer();
+            _directory = options.CacheDirPath;
+            _maxSize = options.CacheDirSize;
+            _serializer = ContribSentrySdk.Serializer;
         }
             
         public void Store(SentryEvent @event)
@@ -67,6 +69,7 @@ namespace ContribSentry.Cache
             if (File.Exists(eventPath))
             {
                 File.Delete(eventPath);
+                ContribSentrySdk.Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry event removed from Cache.");
             }
         }
 
@@ -78,7 +81,7 @@ namespace ContribSentry.Cache
                 try
                 {
                     var data = File.ReadAllBytes(filePath);
-                    list.Add(new CachedSentryData(Guid.Parse(GetEventIdFromPath(filePath)), data));
+                    list.Add(new CachedSentryData(Guid.Parse(GetEventIdFromPath(filePath)), data, ESentryType.Event));
                 }
                 catch(UnauthorizedAccessException ae) { }
                 catch
@@ -93,6 +96,6 @@ namespace ContribSentry.Cache
         private string GetEventPath(CachedSentryData @event) => $"{_directory}/{@event.EventId}{FileSufix}";
         private string GetEventIdFromPath(string path) => path.Replace($"{_directory}/", "").Replace(FileSufix, "");
         private int GetNumberOfStoredEvents() => AllEventFileNames().Count();
-        private IEnumerable<string> AllEventFileNames() => Directory.EnumerateFiles(_directory, FileSufix);
+        private IEnumerable<string> AllEventFileNames() => Directory.EnumerateFiles(_directory, $"*{FileSufix}");
     }
 }
