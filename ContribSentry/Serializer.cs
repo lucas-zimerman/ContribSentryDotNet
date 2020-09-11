@@ -5,11 +5,14 @@ using System;
 using System.IO;
 using System.Text;
 using Sentry;
+using Newtonsoft.Json.Converters;
 
 namespace ContribSentry
 {
     public class Serializer
     {
+        private static readonly StringEnumConverter StringEnumConverter = new StringEnumConverter();
+
         internal Encoding utf8 = Encoding.UTF8;
 
         JsonSerializerSettings jsonSettings;
@@ -18,8 +21,12 @@ namespace ContribSentry
         {
             jsonSettings = new JsonSerializerSettings()
             {
+                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
                 DateFormatHandling = DateFormatHandling.IsoDateFormat,
                 DateTimeZoneHandling = DateTimeZoneHandling.Utc,
+                Formatting = Formatting.None,
+                Converters = new[] { StringEnumConverter },
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 NullValueHandling = NullValueHandling.Ignore
             };
         }
