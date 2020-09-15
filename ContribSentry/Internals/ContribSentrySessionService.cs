@@ -1,4 +1,5 @@
-﻿using ContribSentry.Enums;
+﻿using ContribSentry.Cache;
+using ContribSentry.Enums;
 using ContribSentry.Interface;
 using Sentry.Extensibility;
 using Sentry.Protocol;
@@ -14,10 +15,12 @@ namespace ContribSentry.Internals
 
         internal DistinctiveId IdHandler;
 
+        private bool _globalSessionMode;
 
         public void Init(ContribSentryOptions options, IEndConsumerService endConsumer)
         {
-            if (options.GlobalSessionMode)
+            _globalSessionMode = options.GlobalSessionMode;
+            if (_globalSessionMode)
                 HealthContainer = new SessionContainerGlobal();
             else
                 HealthContainer = new SessionContainerAsyncLocal();
@@ -58,5 +61,27 @@ namespace ContribSentry.Internals
         }
 
         public ISession GetCurrent() => HealthContainer.GetCurrent();
+
+        public void CacheCurrentSesion() 
+        {
+            if (_globalSessionMode)
+            {
+                if(GetCurrent() is Session session)
+                {
+                    var cached = session.Clone();
+                    cached.End();
+                    EndConsumer.CacheCurrentSession(cached);
+                }
+            }
+        }
+
+        public void DeleteCachedCurrentSession() 
+        {
+            if (_globalSessionMode)
+            {
+                ContribSentrySdk.EnvelopeCache.Discard(new CachedSentryData(SentryId.Empty, null, ESentryType.CurrentSession));
+            }
+        }
+
     }
 }

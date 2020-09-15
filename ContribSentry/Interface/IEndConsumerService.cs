@@ -10,6 +10,7 @@ namespace ContribSentry.Interface
     {
         void CaptureTracing(SentryTracingEvent tracing);
         void CaptureSession(ISession session);
+        void CacheCurrentSession(ISession session);
         Task<bool> CaptureCachedEnvelope(CachedSentryData envelope);
     }
 }

@@ -15,6 +15,7 @@ namespace ContribSentry.Cache
 
         internal static readonly string SufixEnvelopeFile = ".envelope";
         internal static readonly string SufixSessionFile = ".session";
+        internal static readonly string PrefixCurrentSessionFile = "session";
         /// <summary>
         /// Unused.
         /// </summary>
@@ -22,22 +23,21 @@ namespace ContribSentry.Cache
 
         private string _directory;
         private int _maxSize;
-        private Serializer _serializer;
 
         internal EnvelopeCache(ContribSentryOptions options)
         {
             _directory = options.CacheDirPath;
             _maxSize = options.CacheDirSize;
-            _serializer = ContribSentrySdk.Serializer;
         }
 
         public void Store(CachedSentryData envelope)
         {
             if (GetNumberOfStoredEnvelopes() < _maxSize)
             {
-                if (envelope.Type == Enums.ESentryType.Session)
+                if (envelope.Type == ESentryType.Session)
                     StoreSession(envelope);
-
+                else if(envelope.Type == ESentryType.CurrentSession)
+                    StoreCurrentSession(envelope);
                 else
                     StoreEnvelope(envelope);
             }
@@ -47,6 +47,22 @@ namespace ContribSentry.Cache
         {
             sessionEnvelope.EventId = Guid.NewGuid();
             var envelopePath = GetSessionPath(sessionEnvelope);
+            if (!File.Exists(envelopePath))
+            {
+                try
+                {
+                    using (var stream = File.Create(envelopePath))
+                    {
+                        stream.Write(sessionEnvelope.Data, 0, sessionEnvelope.Data.Length);
+                    }
+                }
+                catch { }
+            }
+        }
+
+        private void StoreCurrentSession(CachedSentryData sessionEnvelope)
+        {
+            var envelopePath = GetCurrentSessionPath();
             if (!File.Exists(envelopePath))
             {
                 try
@@ -80,6 +96,7 @@ namespace ContribSentry.Cache
         {
             var envelopePaths = AllEnvelopesFileNames();
             var sessionPaths = AllSessionFileNames();
+            var currentSessionPath = GetCurrentSessionPath();
             var list = new List<CachedSentryData>();
 
             //Get All Envelopes
@@ -103,12 +120,22 @@ namespace ContribSentry.Cache
                 }
                 catch { }
             }
+            //Get Current Session
+            if (File.Exists(currentSessionPath))
+            {
+                try
+                {
+                    var data = File.ReadAllBytes(currentSessionPath);
+                    list.Add(new CachedSentryData(Guid.Empty, data, ESentryType.CurrentSession));
+                }
+                catch { }
+            }
             return list;
         }
 
         public void Discard(CachedSentryData envelope)
         {
-            var @envelopePath = envelope.Type == ESentryType.Session ? GetSessionPath(envelope) : GetEnvelopePath(envelope);
+            var @envelopePath = GetPath(envelope);
             if (File.Exists(@envelopePath))
             {
                 File.Delete(@envelopePath);
@@ -116,8 +143,17 @@ namespace ContribSentry.Cache
             }
         }
 
+        public string GetPath(CachedSentryData data)
+        {
+            if (data.Type == ESentryType.Transaction)
+                return GetEnvelopePath(data);
+            if (data.Type == ESentryType.Session)
+                return GetSessionPath(data);
+            return GetCurrentSessionPath();
+        }
         public string GetEnvelopePath(CachedSentryData envelope) => $"{_directory}/{envelope.EventId}{SufixEnvelopeFile}";
         private string GetSessionPath(CachedSentryData envelope) => $"{_directory}/{envelope.EventId}{SufixSessionFile}";
+        private string GetCurrentSessionPath() => $"{_directory}/{PrefixCurrentSessionFile}";
         private string GetEventIdFromPath(string path) => path.Replace($"{_directory}/", "").Replace(SufixEnvelopeFile, "").Replace(SufixSessionFile,"");
         private int GetNumberOfStoredEnvelopes() => AllEnvelopesFileNames().Count();
         private IEnumerable<string> AllEnvelopesFileNames() => Directory.EnumerateFiles(_directory, $"*{SufixEnvelopeFile}");

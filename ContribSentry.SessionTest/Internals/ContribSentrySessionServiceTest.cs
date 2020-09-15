@@ -1,4 +1,5 @@
-﻿using ContribSentry.Interface;
+﻿using ContribSentry.Cache;
+using ContribSentry.Interface;
 using ContribSentry.Internals;
 using Moq;
 using System.Threading;
@@ -76,5 +77,71 @@ namespace ContribSentry.SessionTest.Internals
             var session = GetGlobalSession(httpMoq.Object);
             Assert.True(session.HealthContainer.GetType() == typeof(SessionContainerGlobal));
         }
+
+        [Fact]
+        public void CacheCurrentSesion_Without_Session_Doesnt_Call_CacheFunction()
+        {
+            var evt = new ManualResetEvent(false);
+            var endConsumerMoq = new Mock<IEndConsumerService>();
+            endConsumerMoq.Setup(p => p.CacheCurrentSession(It.IsAny<ISession>())).Callback(() => evt.Set());
+            var session = GetGlobalSession(endConsumerMoq.Object);
+            session.CacheCurrentSesion();
+            Assert.False(evt.WaitOne(300));
+        }
+
+        [Fact]
+        public void CacheCurrentSesion_With_Session_Calls_CacheFunction()
+        {
+            var evt = new ManualResetEvent(false);
+            var endConsumerMoq = new Mock<IEndConsumerService>();
+            endConsumerMoq.Setup(p => p.CacheCurrentSession(It.IsAny<ISession>())).Callback(() => evt.Set());
+            var session = GetGlobalSession(endConsumerMoq.Object);
+            session.StartSession(null, null, null, null);
+            session.CacheCurrentSesion();
+            Assert.True(evt.WaitOne(300));
+        }
+
+        [Fact]
+        public void DeleteCachedCurrentSession_Without_Session_Calls_Discard()
+        {
+            var evt = new ManualResetEvent(false);
+            var endConsumerMoq = new Mock<IEndConsumerService>();
+            var envelopeCacheMoq = new Mock<IEnvelopeCache>();
+            envelopeCacheMoq.Setup(p => p.Discard(It.IsAny<CachedSentryData>())).Callback(() => evt.Set());
+            var session = GetGlobalSession(endConsumerMoq.Object);
+            try
+            {
+                ContribSentrySdk.EnvelopeCache = envelopeCacheMoq.Object;
+                session.DeleteCachedCurrentSession();
+                Assert.True(evt.WaitOne(300));
+            }
+            finally
+            {
+                ContribSentrySdk.EnvelopeCache = null;
+            }
+        }
+
+        [Fact]
+        public void DeleteCachedCurrentSession_With_Session_Calls_Discard()
+        {
+            var evt = new ManualResetEvent(false);
+            var endConsumerMoq = new Mock<IEndConsumerService>();
+            var envelopeCacheMoq = new Mock<IEnvelopeCache>();
+            envelopeCacheMoq.Setup(p => p.Discard(It.IsAny<CachedSentryData>())).Callback(() => evt.Set());
+            var session = GetGlobalSession(endConsumerMoq.Object);
+            try
+            {
+                ContribSentrySdk.EnvelopeCache = envelopeCacheMoq.Object;
+                session.StartSession(null, null, null, null);
+                session.DeleteCachedCurrentSession();
+                Assert.True(evt.WaitOne(300));
+            }
+            finally
+            {
+                ContribSentrySdk.EnvelopeCache = null;
+            }
+        }
+
+
     }
 }
