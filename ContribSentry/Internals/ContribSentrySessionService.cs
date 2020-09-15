@@ -69,7 +69,7 @@ namespace ContribSentry.Internals
                 if(GetCurrent() is Session session)
                 {
                     var cached = session.Clone();
-                    cached.End();
+                    cached.End(DateTime.UtcNow);
                     EndConsumer.CacheCurrentSession(cached);
                 }
             }

@@ -135,14 +135,7 @@ namespace ContribSentry.Internals
                     Status = ESessionState.Exited;
                 }
 
-                if (timestamp != null)
-                {
-                    Timestamp = timestamp;
-                }
-                else
-                {
-                    Timestamp = DateTime.UtcNow;
-                }
+                Timestamp = timestamp ?? DateTime.UtcNow;
 
                 if (timestamp != null)
                 {
