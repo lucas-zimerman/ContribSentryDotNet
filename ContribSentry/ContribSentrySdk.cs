@@ -69,6 +69,22 @@ namespace ContribSentry
         }
 
         /// <summary>
+        /// Backup the current data (Clientside apps)
+        /// </summary>
+        public static void Sleep()
+        {
+            SessionService.CacheCurrentSesion();
+        }
+
+        /// <summary>
+        /// Inform that your application was resumed (Clientside apps)
+        /// </summary>
+        public static void Resume()
+        {
+            SessionService.DeleteCachedCurrentSession();
+        }
+
+        /// <summary>
         /// Clears the project Data.
         /// </summary>
         public static void Close()

@@ -37,6 +37,11 @@ namespace ContribSentry.Internals
             return new SentryEnvelope(SentryId.Empty, sdkVersion, SentryEnvelopeItem.FromSession(session, serializer));
         }
 
+        public static SentryEnvelope FromSession(byte[] session, SdkVersion sdkVersion)
+        {
+            return new SentryEnvelope(SentryId.Empty, sdkVersion, SentryEnvelopeItem.FromSession(session));
+        }
+
         public static SentryEnvelope FromTracing(SentryTracingEvent tracing, SdkVersion sdkVersion,
             Serializer serializer)
         {

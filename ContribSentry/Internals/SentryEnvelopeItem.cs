@@ -24,6 +24,11 @@ namespace ContribSentry.Internals
             return new SentryEnvelopeItem(new SentryItemType(ESentryType.Session), array);
         }
 
+        public static SentryEnvelopeItem FromSession(byte[] session)
+        {
+            return new SentryEnvelopeItem(new SentryItemType(ESentryType.Session), session);
+        }
+
         public static SentryEnvelopeItem FromTransaction(SentryTracingEvent tracing, Serializer serializer)
         {
             var memoryStream = new MemoryStream();

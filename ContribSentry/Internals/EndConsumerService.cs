@@ -1,4 +1,5 @@
 ﻿using ContribSentry.Cache;
+using ContribSentry.Enums;
 using ContribSentry.Interface;
 using ContribSentry.Transport;
 using Sentry.Protocol;
@@ -28,6 +29,13 @@ namespace ContribSentry.Internals
             });
         }
 
+        public void CacheCurrentSession(ISession session)
+        {
+            ContribSentrySdk.Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Caching current Session");
+            var data = GetCacheFromCurrentSession(session);
+            ContribSentrySdk.EnvelopeCache.Store(data);
+        }
+
         public void CaptureTracing(SentryTracingEvent tracing)
         {
             ContribSentrySdk.Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Capturing Tracing {tracing.EventId} and Caching it.");
@@ -47,9 +55,17 @@ namespace ContribSentry.Internals
             });
         }
 
-        public async Task<bool> CaptureCachedEnvelope(CachedSentryData envelope)
+        public async Task<bool> CaptureCachedEnvelope(CachedSentryData cachedData)
         {
-            return await HttpTransport.Send(envelope);
+            if(cachedData.Type == ESentryType.CurrentSession)
+            {
+                var envelope = SentryEnvelope.FromSession(cachedData.Data,
+                    ContribSentrySdk.Options.ContribSdk);
+                var cachedEnvelope = GetCacheFromEnvelope(envelope);
+
+                return await HttpTransport.Send(cachedEnvelope);
+            }
+            return await HttpTransport.Send(cachedData);
         }
 
         private CachedSentryData GetCacheFromEnvelope(SentryEnvelope envelope)
@@ -60,5 +76,15 @@ namespace ContribSentry.Internals
             memoryStream.Close();
             return cache;
         }
+
+        private CachedSentryData GetCacheFromCurrentSession(ISession session)
+        {
+            var memoryStream = new MemoryStream();
+            ContribSentrySdk.@Serializer.Serialize(session, memoryStream);
+            var cache = new CachedSentryData(SentryId.Empty, memoryStream.ToArray(), ESentryType.CurrentSession);
+            memoryStream.Close();
+            return cache;
+        }
+
     }
 }

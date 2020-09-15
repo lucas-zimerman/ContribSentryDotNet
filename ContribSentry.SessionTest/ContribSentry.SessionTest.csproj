@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ContribSentry.Testing\ContribSentry.Testing.csproj" />
     <ProjectReference Include="..\ContribSentry\ContribSentry.csproj" />
   </ItemGroup>
 

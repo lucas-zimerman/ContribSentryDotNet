@@ -34,6 +34,10 @@ namespace ContribSentry.Interface
         /// <param name="release">The release</param>
         void EndSession();
 
+        void CacheCurrentSesion();
+
+        void DeleteCachedCurrentSession();
+
         /// <summary>
         /// Used internally.
         /// </summary>

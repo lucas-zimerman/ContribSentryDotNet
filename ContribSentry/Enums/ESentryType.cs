@@ -6,6 +6,7 @@
         Event,
         Attachment,
         Transaction,
-        Unknown
+        Unknown,
+        CurrentSession
     }
 }
