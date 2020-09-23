@@ -1,0 +1,352 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ContribSentry</name>
+    </assembly>
+    <members>
+        <member name="T:ContribSentry.Cache.DiskCache">
+            <summary>
+            A simple cache implementation storing the events to a disk, each event in a separater file in a<br/>
+            configured directory.
+            </summary>
+        </member>
+        <member name="F:ContribSentry.Cache.DiskCache.FileSufix">
+            <summary>
+            File suffix added to all serialized event files.
+            </summary>
+        </member>
+        <member name="F:ContribSentry.Cache.EnvelopeCache.CrashMarkerFile">
+            <summary>
+            Unused.
+            </summary>
+        </member>
+        <member name="P:ContribSentry.ContribSentryOptions.GlobalSessionMode">
+            <summary>
+            True for single user applications like Apps, Otherwise, False.
+            </summary>
+        </member>
+        <member name="P:ContribSentry.ContribSentryOptions.DistinctId">
+            <summary>
+            The Device Id or the unique id that represents an user.
+            </summary>
+        </member>
+        <member name="P:ContribSentry.ContribSentryOptions.TracesSampleRate">
+            <summary>
+            the rate of sending events where
+            <para> 1.0 you always send a performance Event.</para> 
+            <para> 0 You'll never send events.</para> 
+            </summary>
+        </member>
+        <member name="P:ContribSentry.ContribSentryOptions.RegisterTracingBreadcrumb">
+            <summary>
+            When set to true, it'll always register a breadcrumb with
+            <br>the given tracing event Id if the event is sent to Sentry</br>
+            </summary>
+        </member>
+        <member name="M:ContribSentry.ContribSentryOptions.SetTracingService(ContribSentry.Interface.IContribSentryTracingService)">
+            <summary>
+            Allows to Inject a custom Tracing Service, must be set before SentrySdk.Init<br/>
+            is called.
+            </summary>
+            <param name="service">The Tracing service.</param>
+        </member>
+        <member name="M:ContribSentry.ContribSentryOptions.SetSessionService(ContribSentry.Interface.IContribSentrySessionService)">
+            <summary>
+            Allows to Inject a custom Session Service, must be set before SentrySdk.Init<br/>
+            is called.
+            </summary>
+            <param name="service">The Session service.</param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:ContribSentry.ContribSentryOptions.SetHasInternetCallback(System.Func{System.Boolean})" -->
+        <member name="P:ContribSentry.ContribSentryOptions.TrackingIdMethod">
+            <summary>
+            Tries to Inject a custom TracingContext that another project requested.
+            </summary>
+        </member>
+        <member name="P:ContribSentry.ContribSentryOptions.BeforeSend">
+            <summary>
+                A callback to invoke before sending an event to Sentry
+            </summary>
+            <Remarks>
+                The return of this event will be sent to Sentry. This allows the application
+                a chance to inspect and/or modify the event before it's sent. If the event should
+                not be sent at all, return null from the callback.
+            </Remarks>
+        </member>
+        <member name="M:ContribSentry.ContribSentrySdk.Sleep">
+            <summary>
+            Backup the current data (Clientside apps)
+            </summary>
+        </member>
+        <member name="M:ContribSentry.ContribSentrySdk.Resume">
+            <summary>
+            Inform that your application was resumed (Clientside apps)
+            </summary>
+        </member>
+        <member name="M:ContribSentry.ContribSentrySdk.Close">
+            <summary>
+            Clears the project Data.
+            </summary>
+        </member>
+        <member name="M:ContribSentry.ContribSentrySdk.StartSession(Sentry.Protocol.User)">
+            <summary>
+            Start new Session for the given user, if the user is not set, it'll use the DistinctId to distinct the user.
+            </summary>
+        </member>
+        <member name="M:ContribSentry.ContribSentrySdk.EndSession">
+            <summary>
+            End a session and send to Sentry
+            </summary>
+        </member>
+        <member name="M:ContribSentry.ContribSentrySdk.RetreiveTransactionByName(System.String)">
+            <summary>
+            Return an active transaction (if found) where the name matches the parameter name.
+            </summary>
+            <param name="name">the transaction name.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ContribSentry.ContribSentrySdk.GetCurrentTransaction">
+            <summary>
+            Get the current transaction in the current context.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ContribSentry.ContribSentrySdk.StartTransaction(System.String)">
+            <summary>
+            Create a new Transaction with the given name.
+            </summary>
+            <param name="name">the transaction name.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ContribSentry.ContribSentrySdk.StartChild(System.String,ContribSentry.Enums.ESpanRequest)">
+            <summary>
+            start a span in the current active transaction
+            </summary>
+            <param name="url">the http request url.</param>
+            <param name="requestType">the request type.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ContribSentry.ContribSentrySdk.StartChild(System.String,System.String)">
+            <summary>
+            start a span in the current active transaction.
+            </summary>
+            <param name="description">the description of the span, like a Sql Query or another data.</param>
+            <param name="op">Normally the name of the action or function</param>
+            <returns></returns>
+        </member>
+        <member name="T:ContribSentry.Enums.ESpanStatus">
+            <summary>
+            <param>Ok</param>
+            <br>The operation completed successfully.</br>
+            </summary>
+        </member>
+        <member name="F:ContribSentry.Enums.ESpanStatus.Ok">
+            <summary>The operation completed successfully.</summary>
+        </member>
+        <member name="F:ContribSentry.Enums.ESpanStatus.DeadlineExceeded">
+            <summary>Deadline expired before operation could complete.</summary>
+        </member>
+        <member name="F:ContribSentry.Enums.ESpanStatus.Unauthenticated">
+            <summary>401 Unauthorized (actually does mean unauthenticated according to RFC 7235).</summary>
+        </member>
+        <member name="F:ContribSentry.Enums.ESpanStatus.PermissionDenied">
+            <summary>403 Forbidden</summary>
+        </member>
+        <member name="F:ContribSentry.Enums.ESpanStatus.NotFound">
+            <summary>404 Not Found. Some requested entity (file or directory) was not found.</summary>
+        </member>
+        <member name="F:ContribSentry.Enums.ESpanStatus.ResourceExhausted">
+            <summary>429 Too Many Requests</summary>
+        </member>
+        <member name="F:ContribSentry.Enums.ESpanStatus.InvalidArgument">
+            <summary>Client specified an invalid argument. 4xx.</summary>
+        </member>
+        <member name="F:ContribSentry.Enums.ESpanStatus.Unimplemented">
+            <summary>501 Not Implemented</summary>
+        </member>
+        <member name="F:ContribSentry.Enums.ESpanStatus.Unavailable">
+            <summary>503 Service Unavailable</summary>
+        </member>
+        <member name="F:ContribSentry.Enums.ESpanStatus.InternalError">
+            <summary>Other/generic 5xx.</summary>
+        </member>
+        <member name="F:ContribSentry.Enums.ESpanStatus.UnknownError">
+            <summary>Unknown. Any non-standard HTTP status code.</summary>
+        </member>
+        <member name="F:ContribSentry.Enums.ESpanStatus.Cancelled">
+            <summary>The operation was cancelled (typically by the user).</summary>
+        </member>
+        <member name="F:ContribSentry.Enums.ESpanStatus.AlreadyExists">
+            <summary>Already exists (409).</summary>
+        </member>
+        <member name="F:ContribSentry.Enums.ESpanStatus.FailedPrecondition">
+            <summary>Operation was rejected because the system is not in a state required for the operation's</summary>
+        </member>
+        <member name="F:ContribSentry.Enums.ESpanStatus.Aborted">
+            <summary>The operation was aborted, typically due to a concurrency issue.</summary>
+        </member>
+        <member name="F:ContribSentry.Enums.ESpanStatus.OutOfRange">
+            <summary>Operation was attempted past the valid range.</summary>
+        </member>
+        <member name="F:ContribSentry.Enums.ESpanStatus.DataLoss">
+            <summary>Unrecoverable data loss or corruption</summary>
+        </member>
+        <member name="M:ContribSentry.Extensibility.DisabledTracing.IsolateTracking(System.Func{System.Threading.Tasks.Task})">
+            <summary>
+            Despite being disabled we must execute the user code
+            </summary>
+            <returns>A task where the user code is running</returns>
+        </member>
+        <member name="M:ContribSentry.Interface.IContribSentrySessionService.Init(ContribSentry.ContribSentryOptions,ContribSentry.Interface.IEndConsumerService)">
+            <summary>
+            Initialize the Session Service.
+            </summary>
+            <param name="options"></param>
+            <param name="endConsumer">The internal Class used for sending Sessions to Sentry.</param>
+        </member>
+        <member name="M:ContribSentry.Interface.IContribSentrySessionService.StartSession(Sentry.Protocol.User,System.String,System.String,System.String)">
+            <summary>
+            Start a new Session.<br/>
+            Note: This function shouldn't be called by the developer.<br/>
+            developer must call StartSession from ContribSentrySdk.
+            </summary>
+            <param name="user">The Sentry user Object</param>
+            <param name="distinctId">The distinctId.</param>
+            <param name="environment">The environment.</param>
+            <param name="release">The release</param>
+        </member>
+        <member name="M:ContribSentry.Interface.IContribSentrySessionService.EndSession">
+            <summary>
+            End a new Session.<br/>
+            Note: This function shouldn't be called by the developer.<br/>
+            developer must call EndSession from ContribSentrySdk.
+            </summary>
+            <param name="user">The Sentry user Object</param>
+            <param name="distinctId">The distinctId.</param>
+            <param name="environment">The environment.</param>
+            <param name="release">The release</param>
+        </member>
+        <member name="M:ContribSentry.Interface.IContribSentrySessionService.GetCurrent">
+            <summary>
+            Used internally.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:ContribSentry.Interface.IEndConsumerService">
+            <summary>
+            Consumes the given objects and send to Sentry or Cache it.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:ContribSentry.Interface.IEventCache" -->
+        <member name="M:ContribSentry.Interface.IEventCache.Store(Sentry.SentryEvent)">
+            <summary>
+            Stores the event so that it can be sent later.
+            </summary>
+            <param name="event">the event to store</param>
+        </member>
+        <member name="M:ContribSentry.Interface.IEventCache.Discard(Sentry.SentryEvent)">
+            <summary>
+            Discards the event from the storage. This means that the event has been successfully sent. Note<br/>
+            that this MUST NOT fail on events that haven't been stored before (i.e. this method is called<br/>
+            even for events that has been sent on the first attempt).
+            </summary>
+            <param name="event">the event to discard from storage</param>
+        </member>
+        <member name="M:ContribSentry.Internals.ISentryTracing.IsolateTracking(System.Func{System.Threading.Tasks.Task})">
+            <summary>
+            Invoke the user code on an isolated environment so that you can interact with Tracing from anywhere. 
+            </summary>
+            <returns>A task where the user code is running.</returns>
+        </member>
+        <member name="P:ContribSentry.Internals.SentryEnvelopeHeader._eventIdString">
+             <summary>
+            Event Id must be set if the envelope holds an event, or an item that is related to the event.<br/>
+             (e.g: attachments, user feedback)
+             </summary>
+        </member>
+        <member name="P:ContribSentry.Internals.Session.Started">
+            started timestamp 
+        </member>
+        <member name="P:ContribSentry.Internals.Session.Timestamp">
+            the timestamp 
+        </member>
+        <member name="P:ContribSentry.Internals.Session.ErrorCount">
+            the number of errors on the session 
+        </member>
+        <member name="P:ContribSentry.Internals.Session.DistinctId">
+            The distinctId, did 
+        </member>
+        <member name="P:ContribSentry.Internals.Session.SessionId">
+            the SessionId, sid 
+        </member>
+        <member name="P:ContribSentry.Internals.Session.Init">
+            The session init flag 
+        </member>
+        <member name="P:ContribSentry.Internals.Session.Status">
+            The session state 
+        </member>
+        <member name="P:ContribSentry.Internals.Session.Sequence">
+            The session sequence 
+        </member>
+        <member name="P:ContribSentry.Internals.Session.Duration">
+            The session duration (timestamp - started) 
+        </member>
+        <member name="P:ContribSentry.Internals.Session.Attributes">
+            User Attributes. *
+        </member>
+        <member name="F:ContribSentry.Internals.Session._sessionLock">
+            The session lock, ops should be atomic 
+        </member>
+        <member name="M:ContribSentry.Internals.Session.End(System.Nullable{System.DateTime})">
+            <summary>
+            Ends a session and update its values.
+            </summary>
+            <param name="timestamp">the timestamp or null</param>
+        </member>
+        <member name="M:ContribSentry.Internals.Session.CalculateDurationTime(System.DateTime)">
+            <summary>
+            Calculates the duration time in seconds timestamp (last update) - started
+            </summary>
+            <param name="timestamp">the timestamp</param>
+            <returns>duration in seconds</returns>
+        </member>
+        <member name="M:ContribSentry.Internals.Session.Update(System.Nullable{ContribSentry.Enums.ESessionState},System.String,System.Boolean)">
+            <summary>
+            Updates the current session and set its values.
+            </summary>
+            <param name="status">the status.</param>
+            <param name="userAgent">the userAgent.</param>
+            <param name="addErrorsCount">true if should increase error count or not.</param>
+            <returns>true if the session has been updated.</returns>
+        </member>
+        <member name="M:ContribSentry.Internals.Session.GetSequenceTimestamp(System.DateTime)">
+            <summary>
+            Returns a logical clock.
+            </summary>
+            <param name="timestamp">The timestamp</param>
+            <returns>time stamp in milliseconds UTC</returns>
+        </member>
+        <member name="T:ContribSentry.Internals.ThreadTracking">
+            <summary>
+            Used for attaching an unique Id for each Callback
+            </summary>
+        </member>
+        <member name="P:ContribSentry.SessionAttributes.IpAddress">
+            the user's ip address 
+        </member>
+        <member name="P:ContribSentry.SessionAttributes.UserAgent">
+            the user Agent 
+        </member>
+        <member name="P:ContribSentry.SessionAttributes.Environment">
+            the environment 
+        </member>
+        <member name="P:ContribSentry.SessionAttributes.Release">
+            the App's release 
+        </member>
+        <member name="P:ContribSentry.Span.Status">
+            <summary>
+            If set, it'll be based on the ESpanStatus result
+            </summary>
+        </member>
+    </members>
+</doc>
