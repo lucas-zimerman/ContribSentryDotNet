@@ -14,7 +14,11 @@
     <PackageId>ContribSentry</PackageId>
     <Product>ContribSentry.SessionSdk</Product>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>3.1.2</Version>
+    <Version>3.1.3</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>C:\Users\lucas\source\repos\SentrySdk\New folder\sentry-dotnet-transaction-addon\ContribSentry\ContribSentry.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

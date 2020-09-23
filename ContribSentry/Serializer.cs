@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using Sentry;
 using Newtonsoft.Json.Converters;
+using ContribSentry.Extensions;
 
 namespace ContribSentry
 {
@@ -15,7 +16,7 @@ namespace ContribSentry
 
         internal Encoding utf8 = Encoding.UTF8;
 
-        JsonSerializerSettings jsonSettings;
+        internal JsonSerializerSettings jsonSettings;
         
         public Serializer()
         {
@@ -61,7 +62,7 @@ namespace ContribSentry
             {
                 writer.Write(nextLineArray, 0, 1);
 
-                var itemTypeJson = JsonConvert.SerializeObject(item.Type, jsonSettings);
+                var itemTypeJson = "{\"type\":\"" + item.Type.Type.ConvertString() + "\"}";
                 writer.Write(utf8.GetBytes(itemTypeJson), 0, itemTypeJson.Length);
 
                 writer.Write(nextLineArray, 0, 1);

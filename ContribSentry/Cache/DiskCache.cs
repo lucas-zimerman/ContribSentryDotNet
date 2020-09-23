@@ -24,6 +24,7 @@ namespace ContribSentry.Cache
         /// File suffix added to all serialized event files.
         /// </summary>
         public static readonly string FileSufix = ".sentry-event";
+        internal static readonly char PathSeparator = Path.DirectorySeparatorChar;
 
         private string _directory;
         private int _maxSize;
@@ -83,7 +84,7 @@ namespace ContribSentry.Cache
                     var data = File.ReadAllBytes(filePath);
                     list.Add(new CachedSentryData(Guid.Parse(GetEventIdFromPath(filePath)), data, ESentryType.Event));
                 }
-                catch(UnauthorizedAccessException ae) { }
+                catch(UnauthorizedAccessException) { }
                 catch
                 {
                     File.Delete(filePath);
@@ -92,9 +93,15 @@ namespace ContribSentry.Cache
             return list;
         }
 
-        private string GetEventPath(SentryEvent @event) => $"{_directory}/{@event.EventId}{FileSufix}";
-        private string GetEventPath(CachedSentryData @event) => $"{_directory}/{@event.EventId}{FileSufix}";
-        private string GetEventIdFromPath(string path) => path.Replace($"{_directory}/", "").Replace(FileSufix, "");
+        private string GetEventPath(SentryEvent @event) => $"{_directory}{PathSeparator}{@event.EventId}{FileSufix}";
+        private string GetEventPath(CachedSentryData @event) => $"{_directory}{PathSeparator}{@event.EventId}{FileSufix}";
+        private string GetEventIdFromPath(string path)
+        {
+            var a = _directory.Length + 1;
+            var b = path.LastIndexOf('.');
+            return path.Substring(a, b - a);
+        }
+
         private int GetNumberOfStoredEvents() => AllEventFileNames().Count();
         private IEnumerable<string> AllEventFileNames() => Directory.EnumerateFiles(_directory, $"*{FileSufix}");
     }

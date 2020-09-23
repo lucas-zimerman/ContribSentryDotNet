@@ -5,6 +5,7 @@ using Sentry.Protocol;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace ContribSentry.TracingTest.Cache
@@ -104,6 +105,78 @@ namespace ContribSentry.TracingTest.Cache
 
                 var retreivedCachedList = envelopeCache.Iterator();
                 Assert.Equal(2, retreivedCachedList.Count);
+
+                foreach (var data in cachedData)
+                {
+                    envelopeCache.Discard(data);
+                    Assert.False(File.Exists(envelopeCache.GetEnvelopePath(data)));
+                }
+            }
+        }
+
+        [Fact]
+        public void CachedEnvelope_EnvelopeLimit_Doesnt_Affect_Session_Limit()
+        {
+            using (var folder = new TempFolder())
+            {
+                var envelopeCache = new EnvelopeCache(new ContribSentryOptions(cacheEnable: true)
+                {
+                    CacheDirPath = folder.FolderName,
+                    CacheDirSize = 2
+
+                });
+                var discartedGuid = Guid.NewGuid();
+                var cachedData = new List<CachedSentryData>(){
+                    new CachedSentryData(Guid.NewGuid(), new byte[1]{ 13 }, ESentryType.Transaction),
+                    new CachedSentryData(Guid.NewGuid(), new byte[1]{ 13 }, ESentryType.Transaction),
+                    new CachedSentryData(Guid.NewGuid(), new byte[1]{ 13 }, ESentryType.Session),
+                };
+
+                foreach (var data in cachedData)
+                {
+                    envelopeCache.Store(data);
+                }
+
+                var retreivedCachedList = envelopeCache.Iterator();
+                Assert.Equal(3, retreivedCachedList.Count);
+                Assert.Equal(2, retreivedCachedList.Where(p => p.Type == ESentryType.Transaction).Count());
+                Assert.Single(retreivedCachedList.Where(p => p.Type == ESentryType.Session));
+
+                foreach (var data in cachedData)
+                {
+                    envelopeCache.Discard(data);
+                    Assert.False(File.Exists(envelopeCache.GetEnvelopePath(data)));
+                }
+            }
+        }
+
+        [Fact]
+        public void CachedEnvelope_SessionLimit_Doesnt_Affect_Envelope_Limit()
+        {
+            using (var folder = new TempFolder())
+            {
+                var envelopeCache = new EnvelopeCache(new ContribSentryOptions(cacheEnable: true)
+                {
+                    CacheDirPath = folder.FolderName,
+                    CacheDirSize = 2
+
+                });
+                var discartedGuid = Guid.NewGuid();
+                var cachedData = new List<CachedSentryData>(){
+                    new CachedSentryData(Guid.NewGuid(), new byte[1]{ 13 }, ESentryType.Session),
+                    new CachedSentryData(Guid.NewGuid(), new byte[1]{ 13 }, ESentryType.Session),
+                    new CachedSentryData(Guid.NewGuid(), new byte[1]{ 13 }, ESentryType.Transaction),
+                };
+
+                foreach (var data in cachedData)
+                {
+                    envelopeCache.Store(data);
+                }
+
+                var retreivedCachedList = envelopeCache.Iterator();
+                Assert.Equal(3, retreivedCachedList.Count);
+                Assert.Equal(2, retreivedCachedList.Where(p => p.Type == ESentryType.Session).Count());
+                Assert.Single(retreivedCachedList.Where(p => p.Type == ESentryType.Transaction));
 
                 foreach (var data in cachedData)
                 {
