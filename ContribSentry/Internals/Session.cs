@@ -33,11 +33,8 @@ namespace ContribSentry.Internals
         public bool? Init { get; private set; }
 
         /** The session state */
-        [JsonIgnore]
-        public ESessionState Status { get; set; }
-
         [JsonProperty("status")]
-        internal string _statusJson => Status.ConvertString();
+        public ESessionState Status { get; set; }
 
         /** The session sequence */
         [JsonIgnore]
