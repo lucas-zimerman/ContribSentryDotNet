@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using ContribSentry.Enums;
+﻿using ContribSentry.Enums;
 using System.IO;
 
 namespace ContribSentry.Internals
@@ -23,6 +22,11 @@ namespace ContribSentry.Internals
             var array = memoryStream.ToArray();
             memoryStream.Close();
             return new SentryEnvelopeItem(new SentryItemType(ESentryType.Session), array);
+        }
+
+        public static SentryEnvelopeItem FromSession(byte[] session)
+        {
+            return new SentryEnvelopeItem(new SentryItemType(ESentryType.Session), session);
         }
 
         public static SentryEnvelopeItem FromTransaction(SentryTracingEvent tracing, Serializer serializer)

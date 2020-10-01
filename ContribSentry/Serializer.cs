@@ -4,21 +4,30 @@ using ContribSentry.Internals;
 using System;
 using System.IO;
 using System.Text;
+using Sentry;
+using Newtonsoft.Json.Converters;
+using ContribSentry.Extensions;
 
 namespace ContribSentry
 {
     public class Serializer
     {
+        private static readonly StringEnumConverter StringEnumConverter = new StringEnumConverter();
+
         internal Encoding utf8 = Encoding.UTF8;
 
-        JsonSerializerSettings jsonSettings;
+        internal JsonSerializerSettings jsonSettings;
         
         public Serializer()
         {
             jsonSettings = new JsonSerializerSettings()
             {
+                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
                 DateFormatHandling = DateFormatHandling.IsoDateFormat,
                 DateTimeZoneHandling = DateTimeZoneHandling.Utc,
+                Formatting = Formatting.None,
+                Converters = new[] { StringEnumConverter },
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 NullValueHandling = NullValueHandling.Ignore
             };
         }
@@ -26,6 +35,13 @@ namespace ContribSentry
         public void Serialize(ISession session, Stream writer)
         {
             var json = JsonConvert.SerializeObject(session, jsonSettings);
+            CopyBytesByKb(utf8.GetBytes(json), writer);
+            writer.Flush();
+        }
+
+        public void Serialize(SentryEvent @event, Stream writer)
+        {
+            var json = JsonConvert.SerializeObject(@event, jsonSettings);
             CopyBytesByKb(utf8.GetBytes(json), writer);
             writer.Flush();
         }
@@ -46,7 +62,7 @@ namespace ContribSentry
             {
                 writer.Write(nextLineArray, 0, 1);
 
-                var itemTypeJson = JsonConvert.SerializeObject(item.Type, jsonSettings);
+                var itemTypeJson = "{\"type\":\"" + item.Type.Type.ConvertString() + "\"}";
                 writer.Write(utf8.GetBytes(itemTypeJson), 0, itemTypeJson.Length);
 
                 writer.Write(nextLineArray, 0, 1);
