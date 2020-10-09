@@ -14,7 +14,7 @@
     <PackageId>ContribSentry</PackageId>
     <Product>ContribSentry.SessionSdk</Product>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>3.1.4</Version>
+    <Version>3.1.5</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
