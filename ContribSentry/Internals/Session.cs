@@ -17,7 +17,7 @@ namespace ContribSentry.Internals
         public DateTime? Timestamp { get; private set; }
 
         /** the number of errors on the session */
-        [JsonProperty("errors ")]
+        [JsonProperty("errors")]
         public int? ErrorCount { get; private set; }
 
         /** The distinctId, did */
