@@ -13,6 +13,9 @@ namespace ContribSentry.Interface
         DateTimeOffset? StartTimestamp { get; }
         DateTimeOffset? Timestamp { get; }
         string TraceId { get; }
+        bool Error { get; }
+        string Status { get; }
+
 
         void Finish();
         void Finish(int? httpStatus);
