@@ -39,9 +39,7 @@ namespace ContribSentry
         }
 
         public ISpanBase GetSpan(string op)
-        {
-            return Spans.FirstOrDefault(s => s.Op == op);
-        }
+            => Spans.FirstOrDefault(s => s.Op == op) ?? DisabledSpan.Instance;
 
         public ISpanBase GetCurrentSpan()
         {
@@ -68,7 +66,7 @@ namespace ContribSentry
             if (ContribSentrySdk.IsTracingSdkEnabled && new Random().NextDouble() <= ContribSentrySdk.Options.TracesSampleRate)
             {
                 var hasError = Spans.Any(p => p.Error);
-                Trace.SetStatus(Spans.Last().Status);
+                Trace.SetStatus(Spans.LastOrDefault()?.Status);
 
                 var @event = new SentryTracingEvent(this, hasError);
                 if (ContribSentrySdk.Options.RegisterTracingBreadcrumb)
