@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Sentry.Protocol;
+using System.Collections.Concurrent;
 
 namespace ContribSentry
 {
@@ -21,6 +23,11 @@ namespace ContribSentry
 
         internal Trace Trace { get; private set; }
         public string Transaction { get; private set; }
+
+        public bool HasError { get; set; }
+
+        public ConcurrentDictionary<string, object> Extra { get; set; }
+
         public SentryTracing(string name, int trackerId)
         {
             Trace = new Trace();
@@ -28,6 +35,7 @@ namespace ContribSentry
             Transaction = name;
             StartTimestamp = DateTimeOffset.UtcNow;
             Spans = new List<ISpanBase>();
+            Extra = new ConcurrentDictionary<string, object>();
         }
 
         public ISpanBase GetSpan(string op)
@@ -59,7 +67,10 @@ namespace ContribSentry
         {
             if (ContribSentrySdk.IsTracingSdkEnabled && new Random().NextDouble() <= ContribSentrySdk.Options.TracesSampleRate)
             {
-                var @event = new SentryTracingEvent(this);
+                var hasError = Spans.Any(p => p.Error);
+                Trace.SetStatus(Spans.Last().Status);
+
+                var @event = new SentryTracingEvent(this, hasError);
                 if (ContribSentrySdk.Options.RegisterTracingBreadcrumb)
                 {
                     SentrySdk.AddBreadcrumb(@event.EventId.ToString(), "sentry.transaction");

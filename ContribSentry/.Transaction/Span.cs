@@ -41,6 +41,9 @@ namespace ContribSentry
         [JsonProperty("trace_id")]
         public string TraceId { get; private set; }
 
+        [JsonIgnore]
+        public bool Error { get; private set; }
+
         /// <summary>
         /// If set, it'll be based on the ESpanStatus result
         /// </summary>
@@ -102,6 +105,11 @@ namespace ContribSentry
                 _finished = true;
                 Status = SpanStatus.SpanStatusDictionary[SpanStatus.FromHttpStatusCode(httpCode)];
                 Timestamp = DateTimeOffset.UtcNow;
+
+                if(Status != "ok")
+                {
+                    Error = true;
+                }
             }
         }
 
