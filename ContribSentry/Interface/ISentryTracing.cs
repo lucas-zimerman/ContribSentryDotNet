@@ -1,6 +1,7 @@
 ﻿using ContribSentry.Enums;
 using ContribSentry.Interface;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace ContribSentry.Internals
@@ -13,6 +14,8 @@ namespace ContribSentry.Internals
 
         ISpanBase StartChild(string description, string op = null);
         ISpanBase StartChild(string url, ESpanRequest requestType);
+
+        ConcurrentDictionary<string, object> Extra { get; }
         void Finish();
         void Finish(Exception ex);
     }

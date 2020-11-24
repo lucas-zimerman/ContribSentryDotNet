@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -14,7 +14,7 @@
     <PackageId>ContribSentry</PackageId>
     <Product>ContribSentry.SessionSdk</Product>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>3.1.5</Version>
+    <Version>3.1.7</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -26,6 +26,7 @@
     <Compile Include=".Session\SessionAttributes.cs" />
     <Compile Include=".Transaction\SentryTracing.cs" />
     <Compile Include=".Transaction\SentryTracingEvent.cs" />
+    <Compile Include=".Transaction\SentryTracingExtensions.cs" />
     <Compile Include=".Transaction\Span.cs" />
     <Compile Include=".Transaction\Trace.cs" />
   </ItemGroup>

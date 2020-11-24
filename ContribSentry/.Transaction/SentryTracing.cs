@@ -18,12 +18,18 @@ namespace ContribSentry
         public DateTimeOffset StartTimestamp { get; private set; }
         internal Trace Trace { get; private set; }
         public string Transaction { get; private set; }
+
+        public bool HasError { get; set; }
+
+        public ConcurrentDictionary<string, object> Extra { get; set; }
+
         public SentryTracing(string name, string op)
         {
             Trace = new Trace(op);
             Transaction = name;
             StartTimestamp = DateTimeOffset.UtcNow;
             Spans = new List<ISpanBase>();
+            Extra = new ConcurrentDictionary<string, object>();
         }
 
         public ISpanBase GetCurrentSpan()
@@ -48,15 +54,18 @@ namespace ContribSentry
 
         public void Finish()
         {
-            var @event = new SentryTracingEvent(this);
-            if (ContribSentrySdk.Options.RegisterTracingBreadcrumb)
-            {
-                SentrySdk.AddBreadcrumb(@event.EventId.ToString(), "sentry.transaction");
-            }
-            SentrySdk.WithScope(scope =>
-            {
-                SentrySdk.CaptureEvent(@event);
-            });
+                var hasError = Spans.Any(p => p.Error);
+                Trace.SetStatus(Spans.LastOrDefault()?.Status);
+
+                var @event = new SentryTracingEvent(this, hasError);
+                if (ContribSentrySdk.Options.RegisterTracingBreadcrumb)
+                {
+                    SentrySdk.AddBreadcrumb(@event.EventId.ToString(), "sentry.transaction");
+                }
+                SentrySdk.WithScope(scope =>
+                {
+                    SentrySdk.CaptureEvent(@event);
+                });
         }
 
         public void Finish(Exception ex)

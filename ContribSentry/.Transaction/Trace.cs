@@ -16,6 +16,10 @@ namespace ContribSentry
         [JsonProperty("trace_id")]
         public string TraceId { get; private set; }
 
+        [JsonProperty("status")]
+        public static string Status { get; private set; }
+
+        public void SetStatus(string status) => Status = status;
         #endregion
         public Trace(string op)
         {
