@@ -1,6 +1,7 @@
 ﻿using ContribSentry.Cache;
 using ContribSentry.Extensions;
-using Sentry.Protocol;
+using Sentry;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -13,6 +14,7 @@ namespace ContribSentry.Transport
     public static class HttpTransport
     {
         internal static HttpClient Client = new HttpClient();
+
         public static async Task<bool> Send(CachedSentryData envelope)
         {
             var content = new ByteArrayContent(envelope.Data);
@@ -34,33 +36,24 @@ namespace ContribSentry.Transport
                     var response = await ret.Content?.ReadAsStringAsync();
                     builder.Append(Regex.Replace(response, "[^A-Za-z0-9 ]", ""));
 
-                    ContribSentrySdk.Options.DiagnosticLogger?.Log(SentryLevel.Debug, builder.ToString());
+                    ContribSentrySdk.Options.DiagnosticLogger?.Log(SentryLevel.Error, builder.ToString());
                     return true; //used so we delete the problematic cache
                 }
-                ContribSentrySdk.Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Sent {envelope.Type} ID {envelope.EventId} with status {ret.StatusCode}");
+                ContribSentrySdk.Options.DiagnosticLogger?.Log(SentryLevel.Debug, "ContribSentry Sent {0} ID {1} with status {2}", args: new object[] { envelope.Type, envelope.EventId, ret.StatusCode });
                 return ret.StatusCode == HttpStatusCode.OK;
             }
-            catch
+            catch(Exception ex)
             {
-                ContribSentrySdk.Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Failed to Send {envelope.Type} ID {envelope.EventId}");
+                ContribSentrySdk.Options.DiagnosticLogger?.Log(SentryLevel.Debug, "ContribSentry Failed to Send {0} ID {1}", ex , new object[] { envelope.Type, envelope.EventId });
                 return false;
             }
         }
 
         private static string GetContentType(CachedSentryData data)
-        {
-            if (data.Type == Enums.ESentryType.Event)
-                return "application/json";
-            return "application/x-sentry-envelope";
-        }
+            => data.Type == Enums.ESentryType.Event ? "application/json" : "application/x-sentry-envelope";
 
         private static string GetContentUrl(CachedSentryData data)
-        {
-            if (data.Type == Enums.ESentryType.Event)
-                return ContribSentrySdk.Options.Dsn.GetEventUrl();
-            return ContribSentrySdk.Options.Dsn.GetEnvelopeUrl();
-
-        }
-
+            => data.Type == Enums.ESentryType.Event ? ContribSentrySdk.Options.ParsedDsn.Value.GetEventUrl() :
+            ContribSentrySdk.Options.ParsedDsn.Value.GetEnvelopeUrl();
     }
 }

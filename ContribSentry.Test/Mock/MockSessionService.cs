@@ -7,7 +7,7 @@ namespace ContribSentry.Test.Mock
     public class MockSessionService : IContribSentrySessionService
     {
 
-        public void Init(ContribSentryOptions options, IEndConsumerService endConsumer) { }
+        public void Init(ContribSentryOptions options, IContribSentryTransport endConsumer) { }
         public void Close() { }
         public ISession GetCurrent() => DisabledSession.Instance;
         public void StartSession(User user, string distinctId, string environment, string release) { }

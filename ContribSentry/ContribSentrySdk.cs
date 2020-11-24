@@ -17,7 +17,7 @@ namespace ContribSentry
         internal static IContribSentrySessionService SessionService = DisabledSessionService.Instance;
         internal static IEventCache EventCache = DisabledDiskCache.Instance;
         internal static IEnvelopeCache EnvelopeCache = DisabledEnvelopeCache.Instance;
-        internal static IEndConsumerService EndConsumer;
+        internal static IContribSentryTransport Transport;
         internal static CacheFileWorker CacheFileWorker;
         internal static ContribSentryOptions Options;
         internal static Serializer @Serializer;
@@ -35,37 +35,37 @@ namespace ContribSentry
             {
                 Options = options;
                 @Serializer = new Serializer();
-                EndConsumer = new EndConsumerService();
+                Transport = new ContribSentryTransport(options);
 
                 if (IsSessionSdkEnabled)
                 {
-                    Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Initializing Session Service");
+                    Options.DiagnosticLogger?.Log(SentryLevel.Debug, "ContribSentry Initializing Session Service");
                     SessionService = Options.SessionService ?? new ContribSentrySessionService();
-                    SessionService.Init(Options, EndConsumer);
-                    Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Session Service Initialzed");
+                    SessionService.Init(Options, Transport);
+                    Options.DiagnosticLogger?.Log(SentryLevel.Debug, "ContribSentry Session Service Initialzed");
                 }
                 if (IsTracingSdkEnabled)
                 {
-                    Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Initializing Tracing Service");
+                    Options.DiagnosticLogger?.Log(SentryLevel.Debug, "ContribSentry Initializing Tracing Service");
                     TracingService = Options.TracingService ?? new TransactionWorker();
                     TracingService.Init(Options);
-                    Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Tracing Service Initialzed");
+                    Options.DiagnosticLogger?.Log(SentryLevel.Debug, "ContribSentry Tracing Service Initialzed");
                 }
                 if (IsCacheEnabled)
                 {
-                    Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Initializing Cache Service");
+                    Options.DiagnosticLogger?.Log(SentryLevel.Debug, "ContribSentry Initializing Cache Service");
                     EventCache = new DiskCache(Options);
                     EnvelopeCache = new EnvelopeCache(Options);
-                    CacheFileWorker = new CacheFileWorker();
+                    CacheFileWorker = new CacheFileWorker(Options);
                     if (!CacheFileWorker.StartWorker())
                     {
                         Options.DisableCache();
                         CacheFileWorker = null;
                     }
                     else
-                        Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Cache Service Initialzed");
+                        Options.DiagnosticLogger?.Log(SentryLevel.Debug, "ContribSentry Cache Service Initialzed");
                 }
-                Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Initialized");
+                Options.DiagnosticLogger?.Log(SentryLevel.Debug, "ContribSentry Initialized");
 
             }
         }
@@ -103,7 +103,7 @@ namespace ContribSentry
             EnvelopeCache = DisabledEnvelopeCache.Instance;
             Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Closed");
             CacheFileWorker = null;
-            EndConsumer = null;
+            Transport = null;
             Options = null;
         }
 
@@ -163,6 +163,8 @@ namespace ContribSentry
         public static ISpanBase StartChild(string description, [CallerMemberName] string op = "")
             => TracingService.StartChild(description, op);
 
+        internal static void CaptureTransaction(SentryTracing tracing, Exception ex)
+            => TracingService.CaptureTransaction(tracing, ex);
         #endregion
     }
 }

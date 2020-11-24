@@ -1,4 +1,5 @@
 ﻿using ContribSentry.Interface;
+using ContribSentry.Protocol;
 using Sentry;
 using Sentry.Extensibility;
 using Sentry.Protocol;
@@ -33,6 +34,7 @@ namespace ContribSentry
         internal void ConsumeSentryOptions(SentryOptions options)
         {
             Dsn = options.Dsn;
+            ParsedDsn = new Lazy<ContribDsn>( ()=> ContribDsn.Parse(Dsn));
             Environment = options.Environment;
             Release = options.Release;
             BeforeSend = options.BeforeSend;
@@ -46,7 +48,8 @@ namespace ContribSentry
         }
 
         internal IDiagnosticLogger DiagnosticLogger { get; private set; }
-        internal Dsn Dsn { get; set; }
+        internal string Dsn { get; set; }
+        internal Lazy<ContribDsn> ParsedDsn { get; set; }
         internal string Environment { get; set; }
         internal string Release { get; set; }
         internal bool IsEnabled => SessionEnabled || TransactionEnabled;
@@ -121,11 +124,6 @@ namespace ContribSentry
         {
             HasInternet = hasInternet;
         }
-
-        /// <summary>
-        /// Tries to Inject a custom TracingContext that another project requested.
-        /// </summary>
-        internal ITracingWorkerContext TrackingIdMethod { get; set; }
 
         /// <summary>
         ///     A callback to invoke before sending an event to Sentry

@@ -9,7 +9,7 @@ namespace ContribSentry.SessionTest.Internals
 {
     public class ContribSentrySessionServiceTest
     {
-        private ContribSentrySessionService GetGlobalSession(IEndConsumerService endConsumer)
+        private ContribSentrySessionService GetGlobalSession(IContribSentryTransport endConsumer)
         {
             var sessionService = new ContribSentrySessionService();
             sessionService.Init(new ContribSentryOptions() { GlobalSessionMode = true }, endConsumer);
@@ -20,7 +20,7 @@ namespace ContribSentry.SessionTest.Internals
         public void EndSession_Sends_Session_To_End_Consumer()
         {
             var evt = new ManualResetEvent(false);
-            var httpMoq = new Mock<IEndConsumerService>();
+            var httpMoq = new Mock<IContribSentryTransport>();
             httpMoq.Setup(p => p.CaptureSession(It.IsAny<ISession>())).Callback(() => evt.Set());
             var session = GetGlobalSession(httpMoq.Object);
             session.StartSession(null, null, null, null);
@@ -32,7 +32,7 @@ namespace ContribSentry.SessionTest.Internals
         public void EndSession_Twice_Sends_Only_One_Session_To_End_Consumer()
         {
             var evt = new ManualResetEvent(false);
-            var httpMoq = new Mock<IEndConsumerService>();
+            var httpMoq = new Mock<IContribSentryTransport>();
             httpMoq.Setup(p => p.CaptureSession(It.IsAny<ISession>())).Callback(() => { evt.Set(); });
             var session = GetGlobalSession(httpMoq.Object);
             session.StartSession(null, null, null, null);
@@ -49,7 +49,7 @@ namespace ContribSentry.SessionTest.Internals
         public void EndSession_Without_Start_Doesnt_Send_Session_To_End_Consumer()
         {
             var called = false;
-            var httpMoq = new Mock<IEndConsumerService>();
+            var httpMoq = new Mock<IContribSentryTransport>();
             httpMoq.Setup(p => p.CaptureSession(It.IsAny<ISession>())).Callback(() => called = true);
             var session = GetGlobalSession(httpMoq.Object);
             session.EndSession();
@@ -60,7 +60,7 @@ namespace ContribSentry.SessionTest.Internals
         public void EndSession_With_Session_Close_Call_Send_Session_To_End_Consumer()
         {
             var evt = new ManualResetEvent(false);
-            var httpMoq = new Mock<IEndConsumerService>();
+            var httpMoq = new Mock<IContribSentryTransport>();
             httpMoq.Setup(p => p.CaptureSession(It.IsAny<ISession>())).Callback(() => evt.Set());
             var session = GetGlobalSession(httpMoq.Object);
             session.StartSession(null, null, null, null);
@@ -72,7 +72,7 @@ namespace ContribSentry.SessionTest.Internals
         public void Init_With_Global_Session_Creates_Global_Container()
         {
             var evt = new ManualResetEvent(false);
-            var httpMoq = new Mock<IEndConsumerService>();
+            var httpMoq = new Mock<IContribSentryTransport>();
             httpMoq.Setup(p => p.CaptureSession(It.IsAny<ISession>())).Callback(() => evt.Set());
             var session = GetGlobalSession(httpMoq.Object);
             Assert.True(session.HealthContainer.GetType() == typeof(SessionContainerGlobal));
@@ -82,7 +82,7 @@ namespace ContribSentry.SessionTest.Internals
         public void CacheCurrentSesion_Without_Session_Doesnt_Call_CacheFunction()
         {
             var evt = new ManualResetEvent(false);
-            var endConsumerMoq = new Mock<IEndConsumerService>();
+            var endConsumerMoq = new Mock<IContribSentryTransport>();
             endConsumerMoq.Setup(p => p.CacheCurrentSession(It.IsAny<ISession>())).Callback(() => evt.Set());
             var session = GetGlobalSession(endConsumerMoq.Object);
             session.CacheCurrentSesion();
@@ -93,7 +93,7 @@ namespace ContribSentry.SessionTest.Internals
         public void CacheCurrentSesion_With_Session_Calls_CacheFunction()
         {
             var evt = new ManualResetEvent(false);
-            var endConsumerMoq = new Mock<IEndConsumerService>();
+            var endConsumerMoq = new Mock<IContribSentryTransport>();
             endConsumerMoq.Setup(p => p.CacheCurrentSession(It.IsAny<ISession>())).Callback(() => evt.Set());
             var session = GetGlobalSession(endConsumerMoq.Object);
             session.StartSession(null, null, null, null);
@@ -105,7 +105,7 @@ namespace ContribSentry.SessionTest.Internals
         public void DeleteCachedCurrentSession_Without_Session_Calls_Discard()
         {
             var evt = new ManualResetEvent(false);
-            var endConsumerMoq = new Mock<IEndConsumerService>();
+            var endConsumerMoq = new Mock<IContribSentryTransport>();
             var envelopeCacheMoq = new Mock<IEnvelopeCache>();
             envelopeCacheMoq.Setup(p => p.Discard(It.IsAny<CachedSentryData>())).Callback(() => evt.Set());
             var session = GetGlobalSession(endConsumerMoq.Object);
@@ -125,7 +125,7 @@ namespace ContribSentry.SessionTest.Internals
         public void DeleteCachedCurrentSession_With_Session_Calls_Discard()
         {
             var evt = new ManualResetEvent(false);
-            var endConsumerMoq = new Mock<IEndConsumerService>();
+            var endConsumerMoq = new Mock<IContribSentryTransport>();
             var envelopeCacheMoq = new Mock<IEnvelopeCache>();
             envelopeCacheMoq.Setup(p => p.Discard(It.IsAny<CachedSentryData>())).Callback(() => evt.Set());
             var session = GetGlobalSession(endConsumerMoq.Object);

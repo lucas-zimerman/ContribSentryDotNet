@@ -21,7 +21,7 @@ namespace ContribSentry.Internals.EventProcessor
                     //crash, must close the session
                     session.End(DateTime.UtcNow);
                     session.Status = ESessionState.Crashed;
-                    ContribSentrySdk.EndConsumer.CaptureSession(session);
+                    ContribSentrySdk.Transport.CaptureSession(session);
                 }
             }
             return @event;

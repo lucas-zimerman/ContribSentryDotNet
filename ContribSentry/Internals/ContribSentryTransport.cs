@@ -2,20 +2,27 @@
 using ContribSentry.Enums;
 using ContribSentry.Interface;
 using ContribSentry.Transport;
+using Sentry;
 using Sentry.Protocol;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace ContribSentry.Internals
 {
-    internal class EndConsumerService : IEndConsumerService
+    internal class ContribSentryTransport : IContribSentryTransport
     {
+        private ContribSentryOptions _options;
+        public ContribSentryTransport(ContribSentryOptions options)
+        {
+            _options = options;
+        }
+
         public void CaptureSession(ISession session)
         {
-            ContribSentrySdk.Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Capturing Session And Caching it");
+            _options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Capturing Session And Caching it");
 
             var envelope = SentryEnvelope.FromSession(session,
-                ContribSentrySdk.Options.ContribSdk,
+                _options.ContribSdk,
                 ContribSentrySdk.@Serializer);
 
             Task.Run(async () => {
@@ -31,17 +38,17 @@ namespace ContribSentry.Internals
 
         public void CacheCurrentSession(ISession session)
         {
-            ContribSentrySdk.Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Caching current Session");
+            _options.DiagnosticLogger?.Log(SentryLevel.Debug, "ContribSentry Caching current Session");
             var data = GetCacheFromCurrentSession(session);
             ContribSentrySdk.EnvelopeCache.Store(data);
         }
 
         public void CaptureTracing(SentryTracingEvent tracing)
         {
-            ContribSentrySdk.Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Capturing Tracing {tracing.EventId} and Caching it.");
+            _options.DiagnosticLogger?.Log(SentryLevel.Debug, "ContribSentry Capturing Tracing {0} and Caching it.", args: new object[] { tracing.EventId });
 
             var envelope = SentryEnvelope.FromTracing(tracing,
-                ContribSentrySdk.Options.ContribSdk,
+                _options.ContribSdk,
                 ContribSentrySdk.@Serializer);
 
             Task.Run(async () => {
@@ -60,7 +67,7 @@ namespace ContribSentry.Internals
             if(cachedData.Type == ESentryType.CurrentSession)
             {
                 var envelope = SentryEnvelope.FromSession(cachedData.Data,
-                    ContribSentrySdk.Options.ContribSdk);
+                    _options.ContribSdk);
                 var cachedEnvelope = GetCacheFromEnvelope(envelope);
 
                 return await HttpTransport.Send(cachedEnvelope);

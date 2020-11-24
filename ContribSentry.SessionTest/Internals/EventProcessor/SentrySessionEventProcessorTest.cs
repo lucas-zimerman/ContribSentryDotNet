@@ -23,9 +23,9 @@ namespace ContribSentry.SessionTest.Internals.EventProcessor
                 mock.Setup(p => p.GetCurrent()).Returns(DisabledSession.Instance);
                 ContribSentrySdk.SessionService = mock.Object;
 
-                var mock2 = new Mock<IEndConsumerService>();
+                var mock2 = new Mock<IContribSentryTransport>();
                 mock2.Setup(p => p.CaptureSession(DisabledSession.Instance)).Callback(() => evt.Set());
-                ContribSentrySdk.EndConsumer = mock2.Object;
+                ContribSentrySdk.Transport = mock2.Object;
 
                 var @event = new SentryEvent();
                 @event.Level = SentryLevel.Error;
@@ -40,7 +40,7 @@ namespace ContribSentry.SessionTest.Internals.EventProcessor
             finally
             {
                 ContribSentrySdk.SessionService = null;
-                ContribSentrySdk.EndConsumer = null;
+                ContribSentrySdk.Transport = null;
             }
         }
 
@@ -55,9 +55,9 @@ namespace ContribSentry.SessionTest.Internals.EventProcessor
                 mock.Setup(p => p.GetCurrent()).Returns(DisabledSession.Instance);
                 ContribSentrySdk.SessionService = mock.Object;
 
-                var mock2 = new Mock<IEndConsumerService>();
+                var mock2 = new Mock<IContribSentryTransport>();
                 mock2.Setup(p => p.CaptureSession(DisabledSession.Instance)).Callback(() => evt.Set());
-                ContribSentrySdk.EndConsumer = mock2.Object;
+                ContribSentrySdk.Transport = mock2.Object;
 
                 var @event = new SentryEvent();
                 @event.Level = SentryLevel.Fatal;
@@ -72,7 +72,7 @@ namespace ContribSentry.SessionTest.Internals.EventProcessor
             finally
             {
                 ContribSentrySdk.SessionService = null;
-                ContribSentrySdk.EndConsumer = null;
+                ContribSentrySdk.Transport = null;
             }
         }
 
@@ -87,9 +87,9 @@ namespace ContribSentry.SessionTest.Internals.EventProcessor
                 mock.Setup(p => p.GetCurrent()).Returns(DisabledSession.Instance);
                 ContribSentrySdk.SessionService = mock.Object;
 
-                var mock2 = new Mock<IEndConsumerService>();
+                var mock2 = new Mock<IContribSentryTransport>();
                 mock2.Setup(p => p.CaptureSession(DisabledSession.Instance)).Callback(() => evt.Set());
-                ContribSentrySdk.EndConsumer = mock2.Object;
+                ContribSentrySdk.Transport = mock2.Object;
 
                 var @event = new SentryEvent();
                 @event.Level = SentryLevel.Error;
@@ -104,7 +104,7 @@ namespace ContribSentry.SessionTest.Internals.EventProcessor
             finally
             {
                 ContribSentrySdk.SessionService = null;
-                ContribSentrySdk.EndConsumer = null;
+                ContribSentrySdk.Transport = null;
             }
         }
 
@@ -119,9 +119,9 @@ namespace ContribSentry.SessionTest.Internals.EventProcessor
                 mock.Setup(p => p.GetCurrent()).Returns(DisabledSession.Instance);
                 ContribSentrySdk.SessionService = mock.Object;
 
-                var mock2 = new Mock<IEndConsumerService>();
+                var mock2 = new Mock<IContribSentryTransport>();
                 mock2.Setup(p => p.CaptureSession(DisabledSession.Instance)).Callback(() => evt.Set());
-                ContribSentrySdk.EndConsumer = mock2.Object;
+                ContribSentrySdk.Transport = mock2.Object;
 
                 var @event = new SentryEvent();
                 @event.Level = SentryLevel.Info;
@@ -133,7 +133,7 @@ namespace ContribSentry.SessionTest.Internals.EventProcessor
             finally
             {
                 ContribSentrySdk.SessionService = null;
-                ContribSentrySdk.EndConsumer = null;
+                ContribSentrySdk.Transport = null;
             }
         }
     }

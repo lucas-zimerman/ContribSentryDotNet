@@ -1,7 +1,9 @@
 ﻿using ContribSentry.Enums;
 using ContribSentry.Extensibility;
 using ContribSentry.Interface;
+using Sentry;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,7 +13,12 @@ namespace ContribSentry.Internals
     {
         internal AsyncLocal<SentryTracing> TracingContext = new AsyncLocal<SentryTracing>();
 
-        public void Init(ContribSentryOptions options) { }
+        private ContribSentryOptions _options;
+
+        public void Init(ContribSentryOptions options) 
+        {
+            _options = options;
+        }
 
         public void Close() { }
 
@@ -63,6 +70,30 @@ namespace ContribSentry.Internals
                 return transaction.StartChild(description, op);
             }
             return span.StartChild(description, op);
+        }
+
+        public void CaptureTransaction(SentryTracing tracing, Exception ex)
+        {
+            var hasError = ex != null;
+            if (!hasError)
+            {
+                hasError = tracing.Spans.Any(p => p.Error);
+                tracing.Trace.SetStatus(tracing.Spans.LastOrDefault()?.Status);
+            }
+            else
+            {
+                tracing.Trace.SetStatus(ex.GetType().ToString());
+            }
+
+            var @event = new SentryTracingEvent(tracing, hasError);
+            if (_options.RegisterTracingBreadcrumb)
+            {
+                SentrySdk.AddBreadcrumb(@event.EventId.ToString(), "sentry.transaction");
+            }
+            SentrySdk.WithScope(scope =>
+            {
+                SentrySdk.CaptureEvent(@event);
+            });
         }
     }
 }

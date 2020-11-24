@@ -3,7 +3,6 @@ using Sentry;
 using ContribSentry.Interface;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Sentry.Protocol;
 
 namespace ContribSentry

@@ -91,7 +91,7 @@ namespace ContribSentry.Test
             try
             {
                 ContribSentrySdk.Init(new ContribSentryOptions());
-                Assert.NotNull(ContribSentrySdk.EndConsumer);
+                Assert.NotNull(ContribSentrySdk.Transport);
             }
             finally
             {

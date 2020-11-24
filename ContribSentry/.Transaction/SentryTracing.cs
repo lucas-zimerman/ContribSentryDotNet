@@ -1,14 +1,11 @@
-﻿using Sentry;
-using ContribSentry.Enums;
+﻿using ContribSentry.Enums;
 using ContribSentry.Extensibility;
 using ContribSentry.Interface;
 using ContribSentry.Internals;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using System.Runtime.CompilerServices;
+using System.Collections.Concurrent;
 
 namespace ContribSentry
 {
@@ -18,9 +15,7 @@ namespace ContribSentry
         public DateTimeOffset StartTimestamp { get; private set; }
         internal Trace Trace { get; private set; }
         public string Transaction { get; private set; }
-
         public bool HasError { get; set; }
-
         public ConcurrentDictionary<string, object> Extra { get; set; }
 
         public SentryTracing(string name, string op)
@@ -53,24 +48,9 @@ namespace ContribSentry
         }
 
         public void Finish()
-        {
-                var hasError = Spans.Any(p => p.Error);
-                Trace.SetStatus(Spans.LastOrDefault()?.Status);
-
-                var @event = new SentryTracingEvent(this, hasError);
-                if (ContribSentrySdk.Options.RegisterTracingBreadcrumb)
-                {
-                    SentrySdk.AddBreadcrumb(@event.EventId.ToString(), "sentry.transaction");
-                }
-                SentrySdk.WithScope(scope =>
-                {
-                    SentrySdk.CaptureEvent(@event);
-                });
-        }
+            => ContribSentrySdk.CaptureTransaction(this, null);
 
         public void Finish(Exception ex)
-        {
-
-        }
+            => ContribSentrySdk.CaptureTransaction(this, ex);
     }
 }

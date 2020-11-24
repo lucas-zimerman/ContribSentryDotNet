@@ -13,7 +13,7 @@ namespace ContribSentry.TracingTest
 
         private void SetupService()
         {
-            Service = new TransactionWorker(null);
+            Service = new TransactionWorker();
             Service.Init(null);
         }
 

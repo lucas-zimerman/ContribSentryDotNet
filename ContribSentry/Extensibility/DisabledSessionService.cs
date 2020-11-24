@@ -7,7 +7,7 @@ namespace ContribSentry.Extensibility
     {
         internal static DisabledSessionService Instance = new DisabledSessionService();
 
-        public void Init(ContribSentryOptions options, IEndConsumerService endConsumer) { }
+        public void Init(ContribSentryOptions options, IContribSentryTransport endConsumer) { }
 
         public void Close() { }
 

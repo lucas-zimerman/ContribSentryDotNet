@@ -13,5 +13,6 @@ namespace ContribSentry.Interface
         void StartTransaction(string name, string method, Action<ISentryTracing> action);
         ISpanBase StartChild(string url, ESpanRequest requestType);
         ISpanBase StartChild(string description, string op);
+        void CaptureTransaction(SentryTracing tracing, Exception ex);
     }
 }

@@ -9,7 +9,7 @@ namespace ContribSentry.Interface
         /// </summary>
         /// <param name="options"></param>
         /// <param name="endConsumer">The internal Class used for sending Sessions to Sentry.</param>
-        void Init(ContribSentryOptions options, IEndConsumerService endConsumer);
+        void Init(ContribSentryOptions options, IContribSentryTransport endConsumer);
         void Close();
 
         /// <summary>

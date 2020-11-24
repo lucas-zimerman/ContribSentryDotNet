@@ -11,13 +11,13 @@ namespace ContribSentry.Internals
     {
         internal ISessionContainer HealthContainer;
 
-        internal IEndConsumerService EndConsumer;
+        internal IContribSentryTransport EndConsumer;
 
         internal DistinctiveId IdHandler;
 
         private bool _globalSessionMode;
 
-        public void Init(ContribSentryOptions options, IEndConsumerService endConsumer)
+        public void Init(ContribSentryOptions options, IContribSentryTransport endConsumer)
         {
             _globalSessionMode = options.GlobalSessionMode;
             if (_globalSessionMode)
