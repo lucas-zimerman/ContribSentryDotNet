@@ -1,6 +1,7 @@
 ﻿using ContribSentry.Enums;
 using ContribSentry.Interface;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -17,6 +18,8 @@ namespace ContribSentry.Internals
 
         ISpanBase StartChild(string description, string op = null);
         ISpanBase StartChild(string url, ESpanRequest requestType);
+
+        ConcurrentDictionary<string, object> Extra { get; }
 
         /// <summary>
         /// Invoke the user code on an isolated environment so that you can interact with Tracing from anywhere. 

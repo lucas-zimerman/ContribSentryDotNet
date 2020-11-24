@@ -2,6 +2,7 @@
 using ContribSentry.Interface;
 using ContribSentry.Internals;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -13,6 +14,8 @@ namespace ContribSentry.Extensibility
         public List<ISpanBase> Spans => null;
 
         public DateTimeOffset StartTimestamp { get; }
+
+        public ConcurrentDictionary<string, object> Extra => null;
 
         public void Dispose() { }
         public void Finish() { }

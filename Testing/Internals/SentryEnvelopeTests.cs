@@ -14,7 +14,7 @@ namespace ContribSentry.TracingTest.Internals
         {
             var serializer = new Serializer();
             var sdk = new SdkVersion();
-            var tracing = new SentryTracingEvent(new SentryTracing(null,0));
+            var tracing = new SentryTracingEvent(new SentryTracing(null,0),false);
             var envelope = SentryEnvelope.FromTracing(tracing,sdk,serializer);
             Assert.Equal(tracing.EventId, envelope.Header.EventId);
             Assert.NotEqual(SentryId.Empty, envelope.Header.EventId);

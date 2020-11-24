@@ -19,7 +19,8 @@ namespace ContribSentry.Extensibility
         public DateTimeOffset? StartTimestamp => null;
         public DateTimeOffset? Timestamp => null;
         public string TraceId => null;
-
+        public bool Error => false;
+        public string Status => null;
         public void Dispose() { }
 
         public void Finish() { }
