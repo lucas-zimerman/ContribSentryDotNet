@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ContribSentry.Test.Mock
 {
-    public class MockThreadTracking : ITracingContextTrackingId
+    public class MockThreadTracking : ITracingWorkerContext
     {
         public bool Created => true;
 

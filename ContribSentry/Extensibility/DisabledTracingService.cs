@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ContribSentry.Extensibility
 {
-    public class DisabledTracingService : IContribSentryTracingService
+    public class DisabledTracingService : ITransactionWorker
     {
         public static DisabledTracingService Instance = new DisabledTracingService();
         public void Close() { }

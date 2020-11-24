@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.Runtime.CompilerServices;
 
 namespace ContribSentry
 {
@@ -15,24 +16,14 @@ namespace ContribSentry
     {
         public List<ISpanBase> Spans { get; private set; }
         public DateTimeOffset StartTimestamp { get; private set; }
-
-        [JsonIgnore]
-        public int TrackerId { get; private set; }
-
         internal Trace Trace { get; private set; }
         public string Transaction { get; private set; }
-        public SentryTracing(string name, int trackerId)
+        public SentryTracing(string name, string op)
         {
-            Trace = new Trace();
-            TrackerId = trackerId;
+            Trace = new Trace(op);
             Transaction = name;
             StartTimestamp = DateTimeOffset.UtcNow;
             Spans = new List<ISpanBase>();
-        }
-
-        public ISpanBase GetSpan(string op)
-        {
-            return Spans.FirstOrDefault(s => s.Op == op);
         }
 
         public ISpanBase GetCurrentSpan()
@@ -57,29 +48,20 @@ namespace ContribSentry
 
         public void Finish()
         {
-            if (ContribSentrySdk.IsTracingSdkEnabled && new Random().NextDouble() <= ContribSentrySdk.Options.TracesSampleRate)
+            var @event = new SentryTracingEvent(this);
+            if (ContribSentrySdk.Options.RegisterTracingBreadcrumb)
             {
-                var @event = new SentryTracingEvent(this);
-                if (ContribSentrySdk.Options.RegisterTracingBreadcrumb)
-                {
-                    SentrySdk.AddBreadcrumb(@event.EventId.ToString(), "sentry.transaction");
-                }
-                SentrySdk.WithScope(scope =>
-                {
-                    SentrySdk.CaptureEvent(@event);
-                });
+                SentrySdk.AddBreadcrumb(@event.EventId.ToString(), "sentry.transaction");
             }
-            ContribSentrySdk.TracingService.DisposeTracingEvent(this);
+            SentrySdk.WithScope(scope =>
+            {
+                SentrySdk.CaptureEvent(@event);
+            });
         }
 
-        public void Dispose()
+        public void Finish(Exception ex)
         {
-            Finish();
-        }
 
-        public Task IsolateTracking(Func<Task> trackedCode)
-        {
-            return ContribSentrySdk.TracingService.StartCallbackTrackingIdAsync(trackedCode, TrackerId);
         }
     }
 }

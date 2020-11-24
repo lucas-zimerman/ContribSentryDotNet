@@ -9,7 +9,7 @@ namespace ContribSentry.TracingTest.Internals
 {
     public class ThreadTrackingTests
     {
-        private async Task TaskWaiter(int? expectedId, ThreadTracking tracking)
+        private async Task TaskWaiter(int? expectedId, TracingWorkerContext tracking)
         {
             await Task.Delay(30);
             Assert.True(tracking.IdRegistered(0));
@@ -19,7 +19,7 @@ namespace ContribSentry.TracingTest.Internals
         [Fact]
         public async Task ThreadTracking_CreateUnique_Numbers()
         {
-            var tracker = new ThreadTracking();
+            var tracker = new TracingWorkerContext();
             var numbers = new int[1000];
             for (int i = 0; i < 300; i++)
             {
@@ -61,7 +61,7 @@ namespace ContribSentry.TracingTest.Internals
         [Fact]
         public void ThreadTracking_UnsafeTracking_Not_Created()
         {
-            var tracker = new ThreadTracking();
+            var tracker = new TracingWorkerContext();
             var id = tracker.InternalNewId();
             Assert.False(tracker.IdRegistered(0));
             Assert.Null(tracker.GetId());
@@ -72,7 +72,7 @@ namespace ContribSentry.TracingTest.Internals
         [Fact]
         public async Task ThreadTracking_CreateTrackTask_newTask_ReturnSameId()
         {
-            var tracker = new ThreadTracking();
+            var tracker = new TracingWorkerContext();
             await tracker.WithIsolatedTracing(async () =>
             {
                 Assert.True(tracker.IdRegistered(0));
@@ -93,7 +93,7 @@ namespace ContribSentry.TracingTest.Internals
         [Fact]
         public async Task ThreadTracking_CreateTrackTask_Using_UnsafeId()
         {
-            var tracker = new ThreadTracking();
+            var tracker = new TracingWorkerContext();
             var unsafeId = tracker.InternalNewId();
             await tracker.WithIsolatedTracing(async () =>
             {
@@ -116,7 +116,7 @@ namespace ContribSentry.TracingTest.Internals
         [Fact]
         public void ThreadTracking_Different_ThreadsCallbacks_Async_Return_DifferentIds()
         {
-            var tracker = new ThreadTracking();
+            var tracker = new TracingWorkerContext();
             int?[] ids = new int?[3];
             var Semaphores = new Semaphore[3] { new Semaphore(0, 1), new Semaphore(0, 1), new Semaphore(0, 1) };
             new Thread(async () =>
@@ -170,7 +170,7 @@ namespace ContribSentry.TracingTest.Internals
         [Fact]
         private async Task ThreadTracking_On_Function_Error()
         {
-            var tracker = new ThreadTracking();
+            var tracker = new TracingWorkerContext();
             bool receivedError = false;
             try
             {

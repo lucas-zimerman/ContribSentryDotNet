@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using ContribSentry.Extensions;
 using System;
-using System.Diagnostics;
 
 namespace ContribSentry
 {
@@ -18,12 +17,9 @@ namespace ContribSentry
         public string TraceId { get; private set; }
 
         #endregion
-        public Trace()
+        public Trace(string op)
         {
-            var st = new StackTrace();
-            var sf = st.GetFrame(5);
-
-            Op = sf.GetMethod().Name;
+            Op = op;
             TraceId = Guid.NewGuid().LimitLength(100);
             SpanId = Guid.NewGuid().LimitLength();
 

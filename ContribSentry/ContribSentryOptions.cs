@@ -85,7 +85,7 @@ namespace ContribSentry
 
         internal SdkVersion ContribSdk { get; set; }
 
-        public IContribSentryTracingService TracingService { get; private set; }
+        public ITransactionWorker TracingService { get; private set; }
         public IContribSentrySessionService SessionService { get; private set; }
 
         public IEnvelopeCache EnvelopeCache { get; private set; }
@@ -97,7 +97,7 @@ namespace ContribSentry
         /// is called.
         /// </summary>
         /// <param name="service">The Tracing service.</param>
-        public void SetTracingService(IContribSentryTracingService service)
+        public void SetTracingService(ITransactionWorker service)
         {
             TracingService = service;
         }
@@ -125,7 +125,7 @@ namespace ContribSentry
         /// <summary>
         /// Tries to Inject a custom TracingContext that another project requested.
         /// </summary>
-        internal ITracingContextTrackingId TrackingIdMethod { get; set; }
+        internal ITracingWorkerContext TrackingIdMethod { get; set; }
 
         /// <summary>
         ///     A callback to invoke before sending an event to Sentry

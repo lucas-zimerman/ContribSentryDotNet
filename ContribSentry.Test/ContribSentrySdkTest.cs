@@ -77,7 +77,7 @@ namespace ContribSentry.Test
             try
             {
                 ContribSentrySdk.Init(new ContribSentryOptions());
-                Assert.True(ContribSentrySdk.TracingService.GetType() == typeof(ContribSentryTracingService));
+                Assert.True(ContribSentrySdk.TracingService.GetType() == typeof(TransactionWorker));
             }
             finally
             {
@@ -117,8 +117,8 @@ namespace ContribSentry.Test
             try
             {
                 ContribSentrySdk.Init(new ContribSentryOptions() { TrackingIdMethod = new MockThreadTracking() });
-                Assert.Equal(typeof(ContribSentryTracingService), ContribSentrySdk.TracingService.GetType());
-                var service = (ContribSentryTracingService)ContribSentrySdk.TracingService;
+                Assert.Equal(typeof(TransactionWorker), ContribSentrySdk.TracingService.GetType());
+                var service = (TransactionWorker)ContribSentrySdk.TracingService;
                 Assert.Equal(typeof(MockThreadTracking), service.Tracker.GetType());
             }
             finally
@@ -133,9 +133,9 @@ namespace ContribSentry.Test
             try
             {
                 ContribSentrySdk.Init(new ContribSentryOptions());
-                Assert.Equal(typeof(ContribSentryTracingService), ContribSentrySdk.TracingService.GetType());
-                var service = (ContribSentryTracingService)ContribSentrySdk.TracingService;
-                Assert.Equal(typeof(ThreadTracking), service.Tracker.GetType());
+                Assert.Equal(typeof(TransactionWorker), ContribSentrySdk.TracingService.GetType());
+                var service = (TransactionWorker)ContribSentrySdk.TracingService;
+                Assert.Equal(typeof(TracingWorkerContext), service.Tracker.GetType());
             }
             finally
             {

@@ -9,11 +9,11 @@ namespace ContribSentry.TracingTest
 {
     public class StartChildTest
     {
-        public IContribSentryTracingService Service;
+        public ITransactionWorker Service;
 
         private void SetupService()
         {
-            Service = new ContribSentryTracingService(null);
+            Service = new TransactionWorker(null);
             Service.Init(null);
         }
 

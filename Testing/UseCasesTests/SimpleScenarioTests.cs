@@ -10,11 +10,11 @@ namespace ContribSentry.TracingTest.UseCasesTests
 {
     public class SimpleScenarioTests
     {
-        public IContribSentryTracingService Service;
+        public ITransactionWorker Service;
 
         private void SetupService()
         {
-            Service = new ContribSentryTracingService(null);
+            Service = new TransactionWorker(null);
             Service.Init(null);
         }
 

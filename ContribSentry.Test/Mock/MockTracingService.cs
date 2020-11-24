@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ContribSentry.Test.Mock
 {
-    public class MockTracingService : IContribSentryTracingService
+    public class MockTracingService : ITransactionWorker
     {
         public void Close() { }
 

@@ -1,22 +1,17 @@
 ﻿using ContribSentry.Enums;
 using ContribSentry.Internals;
 using System;
-using System.Threading.Tasks;
 
 namespace ContribSentry.Interface
 {
-    public interface IContribSentryTracingService
+    public interface ITransactionWorker
     {
         void Init(ContribSentryOptions options);
         void Close();
-        ISentryTracing RetreiveTransactionById(string id);
-        ISentryTracing RetreiveTransactionByName(string name);
         ISentryTracing GetCurrentTransaction();
         ISpanBase GetCurrentTracingSpan();
-        ISentryTracing StartTransaction(string name);
+        void StartTransaction(string name, string method, Action<ISentryTracing> action);
         ISpanBase StartChild(string url, ESpanRequest requestType);
         ISpanBase StartChild(string description, string op);
-        void DisposeTracingEvent(SentryTracing tracing);
-        Task StartCallbackTrackingIdAsync(Func<Task> test, int? unsafeId);
     }
 }

@@ -16,8 +16,8 @@ namespace ContribSentry.AspNetCore.Tests
                 integration.Register(null,new SentryOptions());
                 Assert.True(ContribSentrySdk.IsEnabled);
                 Assert.True(ContribSentrySdk.IsTracingSdkEnabled);
-                Assert.Equal(typeof(ContribSentryTracingService), ContribSentrySdk.TracingService.GetType());
-                var service = (ContribSentryTracingService)ContribSentrySdk.TracingService;
+                Assert.Equal(typeof(TransactionWorker), ContribSentrySdk.TracingService.GetType());
+                var service = (TransactionWorker)ContribSentrySdk.TracingService;
                 Assert.Equal(typeof(HttpContextTracking), service.Tracker.GetType());
             }
             finally

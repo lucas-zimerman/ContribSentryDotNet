@@ -5,13 +5,15 @@ using ContribSentry.Interface;
 using ContribSentry.Extensibility;
 using System;
 using ContribSentry.Cache;
+using Sentry;
+using System.Runtime.CompilerServices;
 
 namespace ContribSentry
 {
     public static class ContribSentrySdk
     {
 
-        internal static IContribSentryTracingService TracingService = DisabledTracingService.Instance;
+        internal static ITransactionWorker TracingService = DisabledTracingService.Instance;
         internal static IContribSentrySessionService SessionService = DisabledSessionService.Instance;
         internal static IEventCache EventCache = DisabledDiskCache.Instance;
         internal static IEnvelopeCache EnvelopeCache = DisabledEnvelopeCache.Instance;
@@ -45,7 +47,7 @@ namespace ContribSentry
                 if (IsTracingSdkEnabled)
                 {
                     Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Initializing Tracing Service");
-                    TracingService = Options.TracingService ?? new ContribSentryTracingService(Options.TrackingIdMethod);
+                    TracingService = Options.TracingService ?? new TransactionWorker();
                     TracingService.Init(Options);
                     Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Tracing Service Initialzed");
                 }
@@ -125,44 +127,23 @@ namespace ContribSentry
 
         #endregion
         #region Transaction
-        [Obsolete]
-        public static ISentryTracing RetreiveTransactionById(string id)
-        {
-            return TracingService.RetreiveTransactionById(id);
-        }
-        /// <summary>
-        /// Return an active transaction (if found) where the name matches the parameter name.
-        /// </summary>
-        /// <param name="name">the transaction name.</param>
-        /// <returns></returns>
-        public static ISentryTracing RetreiveTransactionByName(string name)
-        {
-            return TracingService.RetreiveTransactionByName(name);
-        }
-
         /// <summary>
         /// Get the current transaction in the current context.
         /// </summary>
         /// <returns></returns>
         public static ISentryTracing GetCurrentTransaction()
-        {
-            return TracingService.GetCurrentTransaction();
-        }
+            => TracingService.GetCurrentTransaction();
 
         public static ISpanBase GetCurrentTracingSpan()
-        {
-            return TracingService.GetCurrentTracingSpan();
-        }
+            => TracingService.GetCurrentTracingSpan();
 
         /// <summary>
         /// Create a new Transaction with the given name.
         /// </summary>
         /// <param name="name">the transaction name.</param>
         /// <returns></returns>
-        public static ISentryTracing StartTransaction(string name)
-        {
-            return TracingService.StartTransaction(name);
-        }
+        public static void StartTransaction(string name, Action<ISentryTracing> action, [CallerMemberName] string method = "")
+            => TracingService.StartTransaction(name, method, action);
 
         /// <summary>
         /// start a span in the current active transaction
@@ -171,20 +152,17 @@ namespace ContribSentry
         /// <param name="requestType">the request type.</param>
         /// <returns></returns>
         public static ISpanBase StartChild(string url, ESpanRequest requestType)
-        {
-            return TracingService.StartChild(url, requestType);
-        }
+            => TracingService.StartChild(url, requestType);
 
         /// <summary>
         /// start a span in the current active transaction.
         /// </summary>
         /// <param name="description">the description of the span, like a Sql Query or another data.</param>
-        /// <param name="op">Normally the name of the action or function</param>
+        /// <param name="op">the method name.</param>
         /// <returns></returns>
-        public static ISpanBase StartChild(string description, string op = null)
-        {
-            return TracingService.StartChild(description, op);
-        }
+        public static ISpanBase StartChild(string description, [CallerMemberName] string op = "")
+            => TracingService.StartChild(description, op);
+
         #endregion
     }
 }

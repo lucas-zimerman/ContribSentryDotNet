@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ContribSentry.AspNetCore.Internals
 {
-    internal class HttpContextTracking : ITracingContextTrackingId
+    internal class HttpContextTracking : ITracingWorkerContext
     {
         private readonly string _requestIdField = "RequestId";
 
