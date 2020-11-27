@@ -7,6 +7,7 @@ using System;
 using ContribSentry.Cache;
 using Sentry;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace ContribSentry
 {
@@ -151,8 +152,8 @@ namespace ContribSentry
         /// <param name="url">the http request url.</param>
         /// <param name="requestType">the request type.</param>
         /// <returns></returns>
-        public static ISpanBase StartChild(string url, ESpanRequest requestType)
-            => TracingService.StartChild(url, requestType);
+        public static Task StartChild(string url, ESpanRequest requestType, Action<ISpanBase> action = null)
+            => TracingService.StartChild(url, requestType, action);
 
         /// <summary>
         /// start a span in the current active transaction.
@@ -160,8 +161,8 @@ namespace ContribSentry
         /// <param name="description">the description of the span, like a Sql Query or another data.</param>
         /// <param name="op">the method name.</param>
         /// <returns></returns>
-        public static ISpanBase StartChild(string description, [CallerMemberName] string op = "")
-            => TracingService.StartChild(description, op);
+        public static Task StartChild(string description, [CallerMemberName] string op = "", Action<ISpanBase> action = null)
+            => TracingService.StartChild(description, op, action);
 
         internal static void CaptureTransaction(SentryTracing tracing, Exception ex)
             => TracingService.CaptureTransaction(tracing, ex);

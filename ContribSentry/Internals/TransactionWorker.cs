@@ -11,8 +11,8 @@ namespace ContribSentry.Internals
 {
     internal class TransactionWorker : ITransactionWorker
     {
-        internal AsyncLocal<SentryTracing> TracingContext = new AsyncLocal<SentryTracing>();
-
+        internal AsyncLocal<SentryTracing> CurrentTransaction = new AsyncLocal<SentryTracing>();
+        internal AsyncLocal<ISpanBase> CurrentSpan = new AsyncLocal<ISpanBase>();
         private ContribSentryOptions _options;
 
         public void Init(ContribSentryOptions options) 
@@ -23,19 +23,19 @@ namespace ContribSentry.Internals
         public void Close() { }
 
         public ISentryTracing GetCurrentTransaction()
-            => TracingContext.Value ?? (ISentryTracing)DisabledTracing.Instance;
+            => CurrentTransaction.Value ?? (ISentryTracing)DisabledTracing.Instance;
 
         public ISpanBase GetCurrentTracingSpan()
-            => GetCurrentTransaction().GetCurrentSpan();
+            => CurrentSpan.Value ?? (ISpanBase)DisabledSession.Instance;
 
-        public void StartTransaction(string name, string method, Action<ISentryTracing> action)
+        public Task StartTransaction(string name, string method, Action<ISentryTracing> action)
             => Task.Run(() =>
             {
                 ISentryTracing tracing = DisabledTracing.Instance;
-                if(TracingContext.Value is null)
+                if(CurrentTransaction.Value is null)
                 {
-                    TracingContext.Value = new SentryTracing(name, method);
-                    tracing = TracingContext.Value;
+                    CurrentTransaction.Value = new SentryTracing(name, method);
+                    tracing = CurrentTransaction.Value;
                 }
                 try
                 {
@@ -47,30 +47,54 @@ namespace ContribSentry.Internals
                     throw;
                 }
 
-            }).GetAwaiter();
+            });
 
 
-        public ISpanBase StartChild(string url, ESpanRequest requestType)
-        {
-            var transaction = GetCurrentTransaction();
-            var span = transaction.GetCurrentSpan();
-            if (span is DisabledSpan)
+        public Task StartChild(string url, ESpanRequest requestType, Action<ISpanBase> action)
+            => Task.Run(() =>
             {
-                return transaction.StartChild(url, requestType);
-            }
-            return span.StartChild(url, requestType);
-        }
+                if (CurrentSpan.Value is null)
+                {
+                    var transaction = GetCurrentTransaction();
+                    CurrentSpan.Value = transaction.StartChild(url, requestType);
+                }
+                else
+                {
+                    CurrentSpan.Value = CurrentSpan.Value.StartChild(url, requestType);
+                }
+                try
+                {
+                    action.Invoke(CurrentSpan.Value);
+                    CurrentSpan.Value.Finish();
+                }
+                catch (Exception ex)
+                {
+                            //                                   CurrentSpan.Value.Finish();
+                        }
+            });
 
-        public ISpanBase StartChild(string description, string op = null)
-        {
-            var transaction = GetCurrentTransaction();
-            var span = transaction.GetCurrentSpan();
-            if (span is DisabledSpan)
-            {
-                return transaction.StartChild(description, op);
-            }
-            return span.StartChild(description, op);
-        }
+        public Task StartChild(string description, string op, Action<ISpanBase> action)
+            => Task.Run(() =>
+                           {
+                               if (CurrentSpan.Value is null)
+                               {
+                                   var transaction = GetCurrentTransaction();
+                                   CurrentSpan.Value = transaction.StartChild(description, op);
+                               }
+                               else
+                               {
+                                   CurrentSpan.Value = CurrentSpan.Value.StartChild(description, op);
+                               }
+                               try
+                               {
+                                   action.Invoke(CurrentSpan.Value);
+                                   CurrentSpan.Value.Finish();
+                               }
+                               catch (Exception ex)
+                               {
+//                                   CurrentSpan.Value.Finish();
+                               }
+                           });
 
         public void CaptureTransaction(SentryTracing tracing, Exception ex)
         {

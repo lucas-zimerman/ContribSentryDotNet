@@ -25,7 +25,7 @@ namespace ContribSentry
             if (_options.SessionEnabled) 
                 options.AddEventProcessor(new SentrySessionEventProcessor());
             if(_options.TransactionEnabled)
-                options.AddEventProcessor(new SentryTracingEventProcessor());
+                options.AddEventProcessor(new SentryTracingEventProcessor(_options));
             if (_options.CacheEnabled)
                 options.AddEventProcessor(new SentryOfflineEventProcessor());
             _options = null;

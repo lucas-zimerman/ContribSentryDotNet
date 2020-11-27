@@ -9,6 +9,8 @@ namespace ContribSentry.Test.Mock
 {
     public class MockTracingService : ITransactionWorker
     {
+        public void CaptureTransaction(SentryTracing tracing, Exception ex) { }
+
         public void Close() { }
 
         public void DisposeTracingEvent(SentryTracing tracing) { }
@@ -29,6 +31,21 @@ namespace ContribSentry.Test.Mock
 
         public ISpanBase StartChild(string description, string op) => DisabledSpan.Instance;
 
+        public Task StartChild(string url, ESpanRequest requestType, Action<ISpanBase> action)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task StartChild(string description, string op, Action<ISpanBase> action)
+        {
+            throw new NotImplementedException();
+        }
+
         public ISentryTracing StartTransaction(string name) => DisabledTracing.Instance;
+
+        public Task StartTransaction(string name, string method, Action<ISentryTracing> action)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

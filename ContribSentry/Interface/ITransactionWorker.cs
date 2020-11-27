@@ -1,6 +1,7 @@
 ﻿using ContribSentry.Enums;
 using ContribSentry.Internals;
 using System;
+using System.Threading.Tasks;
 
 namespace ContribSentry.Interface
 {
@@ -10,9 +11,9 @@ namespace ContribSentry.Interface
         void Close();
         ISentryTracing GetCurrentTransaction();
         ISpanBase GetCurrentTracingSpan();
-        void StartTransaction(string name, string method, Action<ISentryTracing> action);
-        ISpanBase StartChild(string url, ESpanRequest requestType);
-        ISpanBase StartChild(string description, string op);
+        Task StartTransaction(string name, string method, Action<ISentryTracing> action);
+        Task StartChild(string url, ESpanRequest requestType, Action<ISpanBase> action);
+        Task StartChild(string description, string op, Action<ISpanBase> action);
         void CaptureTransaction(SentryTracing tracing, Exception ex);
     }
 }

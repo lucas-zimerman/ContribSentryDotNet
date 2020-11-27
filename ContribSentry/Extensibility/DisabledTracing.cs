@@ -36,5 +36,7 @@ namespace ContribSentry.Extensibility
         {
             return trackedCode.Invoke();
         }
+
+        public void Finish(Exception ex) { }
     }
 }
