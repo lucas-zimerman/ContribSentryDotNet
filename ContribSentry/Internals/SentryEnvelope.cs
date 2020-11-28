@@ -42,7 +42,7 @@ namespace ContribSentry.Internals
             return new SentryEnvelope(SentryId.Empty, sdkVersion, SentryEnvelopeItem.FromSession(session));
         }
 
-        public static SentryEnvelope FromTracing(SentryTracingEvent tracing, SdkVersion sdkVersion,
+        public static SentryEnvelope FromTracing(SentryTracing tracing, SdkVersion sdkVersion,
             Serializer serializer)
         {
             return new SentryEnvelope(tracing.EventId, sdkVersion, SentryEnvelopeItem.FromTransaction(tracing, serializer));

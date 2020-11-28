@@ -1,12 +1,12 @@
 ﻿using ContribSentry.Enums;
 using ContribSentry.Interface;
+using Sentry.Protocol;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace ContribSentry.Internals
 {
-    public interface ISentryTracing
+    public interface ISentryTracing : IScope
     {
         List<ISpanBase> Spans { get; }
         DateTimeOffset StartTimestamp { get; }
@@ -14,8 +14,6 @@ namespace ContribSentry.Internals
 
         ISpanBase StartChild(string description, string op = null);
         ISpanBase StartChild(string url, ESpanRequest requestType);
-
-        ConcurrentDictionary<string, object> Extra { get; }
         void Finish();
         void Finish(Exception ex);
     }

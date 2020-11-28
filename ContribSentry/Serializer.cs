@@ -46,7 +46,7 @@ namespace ContribSentry
             writer.Flush();
         }
 
-        public void Serialize(SentryTracingEvent tracing, Stream writer)
+        public void Serialize(SentryTracing tracing, Stream writer)
         {
             var json = JsonConvert.SerializeObject(tracing, jsonSettings);
             CopyBytesByKb(utf8.GetBytes(json), writer);

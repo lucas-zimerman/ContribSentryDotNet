@@ -1,6 +1,8 @@
 ﻿using ContribSentry.Enums;
 using ContribSentry.Extensibility;
+using ContribSentry.Extensions;
 using ContribSentry.Interface;
+using ContribSentry.Internals.EventProcessor;
 using Sentry;
 using System;
 using System.Linq;
@@ -13,11 +15,13 @@ namespace ContribSentry.Internals
     {
         internal AsyncLocal<SentryTracing> CurrentTransaction = new AsyncLocal<SentryTracing>();
         internal AsyncLocal<ISpanBase> CurrentSpan = new AsyncLocal<ISpanBase>();
+        private SentryTracingEventProcessor _tracingEventProcessor;
         private ContribSentryOptions _options;
 
         public void Init(ContribSentryOptions options) 
         {
             _options = options;
+            _tracingEventProcessor = new SentryTracingEventProcessor(options);
         }
 
         public void Close() { }
@@ -69,8 +73,8 @@ namespace ContribSentry.Internals
                 }
                 catch (Exception ex)
                 {
-                            //                                   CurrentSpan.Value.Finish();
-                        }
+//                                   CurrentSpan.Value.Finish();
+                }
             });
 
         public Task StartChild(string description, string op, Action<ISpanBase> action)
@@ -92,10 +96,15 @@ namespace ContribSentry.Internals
                                }
                                catch (Exception ex)
                                {
-//                                   CurrentSpan.Value.Finish();
+                                   CurrentSpan.Value.Finish(ex);
                                }
                            });
 
+        /// <summary>
+        /// Captures the Transaction that was completed.
+        /// </summary>
+        /// <param name="tracing">The transaction.</param>
+        /// <param name="ex">The exception.</param>
         public void CaptureTransaction(SentryTracing tracing, Exception ex)
         {
             var hasError = ex != null;
@@ -106,17 +115,20 @@ namespace ContribSentry.Internals
             }
             else
             {
-                tracing.Trace.SetStatus(ex.GetType().ToString());
+                tracing.Trace.SetStatus(SpanStatus.FromException(ex).ToString());
             }
 
-            var @event = new SentryTracingEvent(tracing, hasError);
             if (_options.RegisterTracingBreadcrumb)
             {
-                SentrySdk.AddBreadcrumb(@event.EventId.ToString(), "sentry.transaction");
+                SentrySdk.AddBreadcrumb(tracing.EventId.ToString(), "sentry.transaction");
             }
             SentrySdk.WithScope(scope =>
             {
-                SentrySdk.CaptureEvent(@event);
+                tracing = _tracingEventProcessor.Process(tracing, scope);
+                if(tracing != null)
+                {
+                    ContribSentrySdk.Transport.CaptureTracing(tracing);
+                }
             });
         }
     }

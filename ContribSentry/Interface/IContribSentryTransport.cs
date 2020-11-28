@@ -8,7 +8,7 @@ namespace ContribSentry.Interface
     /// </summary>
     public interface IContribSentryTransport
     {
-        void CaptureTracing(SentryTracingEvent tracing);
+        void CaptureTracing(SentryTracing tracing);
         void CaptureSession(ISession session);
         void CacheCurrentSession(ISession session);
         Task<bool> CaptureCachedEnvelope(CachedSentryData envelope);

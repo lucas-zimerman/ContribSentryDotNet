@@ -29,7 +29,7 @@ namespace ContribSentry.Internals
             return new SentryEnvelopeItem(new SentryItemType(ESentryType.Session), session);
         }
 
-        public static SentryEnvelopeItem FromTransaction(SentryTracingEvent tracing, Serializer serializer)
+        public static SentryEnvelopeItem FromTransaction(SentryTracing tracing, Serializer serializer)
         {
             var memoryStream = new MemoryStream();
             serializer.Serialize(tracing, memoryStream);

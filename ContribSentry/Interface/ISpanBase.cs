@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ContribSentry.Interface
 {
-    public interface ISpanBase : IDisposable
+    public interface ISpanBase
     {
         string Description { get; }
         string Op { get; }
@@ -19,6 +19,7 @@ namespace ContribSentry.Interface
 
         void Finish();
         void Finish(int? httpStatus);
+        void Finish(Exception exception);   
         void GetParentSpans(List<ISpanBase> spans);
         ISpanBase StartChild(string url, ESpanRequest requestType);
         ISpanBase StartChild(string description, string op = null);

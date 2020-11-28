@@ -43,7 +43,7 @@ namespace ContribSentry.Internals
             ContribSentrySdk.EnvelopeCache.Store(data);
         }
 
-        public void CaptureTracing(SentryTracingEvent tracing)
+        public void CaptureTracing(SentryTracing tracing)
         {
             _options.DiagnosticLogger?.Log(SentryLevel.Debug, "ContribSentry Capturing Tracing {0} and Caching it.", args: new object[] { tracing.EventId });
 

@@ -8,7 +8,7 @@ using ContribSentry.Internals;
 
 namespace ContribSentry
 {
-    public class Span : ISpanBase, IDisposable
+    public class Span : ISpanBase
     {
         #region Properties
 
@@ -92,8 +92,12 @@ namespace ContribSentry
 
         public void Finish()
         {
-            if (_isRequest)
-                Finish(null);
+            if (!_finished)
+            {
+                _finished = true;
+                Status = SpanStatus.SpanStatusDictionary[ESpanStatus.Ok];
+                Timestamp = DateTimeOffset.UtcNow;
+            }
             else
                 Timestamp = DateTimeOffset.UtcNow;
         }
@@ -113,7 +117,14 @@ namespace ContribSentry
             }
         }
 
-        public void Dispose() => Finish();
+        public void Finish(Exception exception)
+        {
+            if (!_finished)
+            {
+                _finished = true;
+                Status = SpanStatus.SpanStatusDictionary[SpanStatus.FromException(exception)];
+            }
+        }
 
         public void GetParentSpans(List<ISpanBase> spans)
         {

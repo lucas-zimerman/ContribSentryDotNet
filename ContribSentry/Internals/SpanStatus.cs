@@ -1,4 +1,5 @@
 ﻿using ContribSentry.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace ContribSentry.Internals
@@ -72,6 +73,29 @@ namespace ContribSentry.Internals
                 }
             }
 
+            return ESpanStatus.UnknownError;
+        }
+
+        internal static ESpanStatus FromException(Exception exception)
+        {
+            if( exception is OperationCanceledException)
+            {
+                return ESpanStatus.DeadlineExceeded;
+            }
+            else if( exception is NotImplementedException)
+            {
+                return ESpanStatus.Unimplemented;
+            }
+            else if( exception is NullReferenceException ||
+                exception is ArgumentNullException)
+            {
+                return ESpanStatus.NotFound;
+            }
+            else if( exception is InsufficientMemoryException ||
+                exception is InsufficientExecutionStackException)
+            {
+                return ESpanStatus.ResourceExhausted;
+            }
             return ESpanStatus.UnknownError;
         }
 
