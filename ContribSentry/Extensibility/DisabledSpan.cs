@@ -25,6 +25,12 @@ namespace ContribSentry.Extensibility
 
         public void Finish() { }
         public void Finish(int? httpStatus) { }
+
+        public void Finish(Exception exception)
+        {
+            throw new NotImplementedException();
+        }
+
         public void GetParentSpans(List<ISpanBase> spans) { }
 
         public ISpanBase StartChild(string description, string op = null) => Instance;

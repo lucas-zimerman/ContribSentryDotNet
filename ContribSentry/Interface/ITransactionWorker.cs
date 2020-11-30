@@ -14,6 +14,7 @@ namespace ContribSentry.Interface
         Task StartTransaction(string name, string method, Action<ISentryTracing> action);
         Task StartChild(string url, ESpanRequest requestType, Action<ISpanBase> action);
         Task StartChild(string description, string op, Action<ISpanBase> action);
+        Task StartChild(string description, string op, Func<ISpanBase, Task> func);
         void CaptureTransaction(SentryTracing tracing, Exception ex);
     }
 }

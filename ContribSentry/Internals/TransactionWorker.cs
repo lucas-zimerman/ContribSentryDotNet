@@ -18,7 +18,7 @@ namespace ContribSentry.Internals
         private SentryTracingEventProcessor _tracingEventProcessor;
         private ContribSentryOptions _options;
 
-        public void Init(ContribSentryOptions options) 
+        public void Init(ContribSentryOptions options)
         {
             _options = options;
             _tracingEventProcessor = new SentryTracingEventProcessor(options);
@@ -33,10 +33,10 @@ namespace ContribSentry.Internals
             => CurrentSpan.Value ?? (ISpanBase)DisabledSession.Instance;
 
         public Task StartTransaction(string name, string method, Action<ISentryTracing> action)
-            => Task.Run(() =>
+            => Task.Run(async () =>
             {
                 ISentryTracing tracing = DisabledTracing.Instance;
-                if(CurrentTransaction.Value is null)
+                if (CurrentTransaction.Value is null)
                 {
                     CurrentTransaction.Value = new SentryTracing(name, method);
                     tracing = CurrentTransaction.Value;
@@ -44,10 +44,11 @@ namespace ContribSentry.Internals
                 try
                 {
                     action(tracing);
-                }
-                catch(Exception ex)
-                {
                     tracing.Finish();
+                }
+                catch (Exception ex)
+                {
+                    tracing.Finish(ex);
                     throw;
                 }
 
@@ -68,12 +69,12 @@ namespace ContribSentry.Internals
                 }
                 try
                 {
-                    action.Invoke(CurrentSpan.Value);
+                    action(CurrentSpan.Value);
                     CurrentSpan.Value.Finish();
                 }
                 catch (Exception ex)
                 {
-//                                   CurrentSpan.Value.Finish();
+                    //                                   CurrentSpan.Value.Finish();
                 }
             });
 
@@ -91,7 +92,7 @@ namespace ContribSentry.Internals
                                }
                                try
                                {
-                                   action.Invoke(CurrentSpan.Value);
+                                   action(CurrentSpan.Value);
                                    CurrentSpan.Value.Finish();
                                }
                                catch (Exception ex)
@@ -99,6 +100,29 @@ namespace ContribSentry.Internals
                                    CurrentSpan.Value.Finish(ex);
                                }
                            });
+
+        public Task StartChild(string description, string op, Func<ISpanBase, Task> func)
+            => Task.Run(async () =>
+            {
+                if (CurrentSpan.Value is null)
+                {
+                    var transaction = GetCurrentTransaction();
+                    CurrentSpan.Value = transaction.StartChild(description, op);
+                }
+                else
+                {
+                    CurrentSpan.Value = CurrentSpan.Value.StartChild(description, op);
+                }
+                try
+                {
+                    await func(CurrentSpan.Value);
+                    CurrentSpan.Value.Finish();
+                }
+                catch (Exception ex)
+                {
+                    CurrentSpan.Value.Finish(ex);
+                }
+            });
 
         /// <summary>
         /// Captures the Transaction that was completed.
@@ -125,7 +149,7 @@ namespace ContribSentry.Internals
             SentrySdk.WithScope(scope =>
             {
                 tracing = _tracingEventProcessor.Process(tracing, scope);
-                if(tracing != null)
+                if (tracing != null)
                 {
                     ContribSentrySdk.Transport.CaptureTracing(tracing);
                 }

@@ -21,7 +21,8 @@ namespace ContribSentry.Internals.EventProcessor
                 tracing.Contexts.AddOrUpdate("trace", tracing.Trace, (id, trace) => trace);
                 tracing.Breadcrumbs = scope.Breadcrumbs;
                 tracing.Environment = scope.Environment;
-                tracing.Sdk = scope.Sdk;
+                //tracing.Sdk = scope.Sdk;
+                tracing.Sdk = new Sentry.Protocol.SdkVersion() { Name = "ContribSentrySDK", Version = "3.2.0-alpha" };
                 tracing.User = scope.User;
                 return tracing;
             }

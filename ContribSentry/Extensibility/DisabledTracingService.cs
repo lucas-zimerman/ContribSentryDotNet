@@ -32,14 +32,13 @@ namespace ContribSentry.Extensibility
         public ISpanBase StartChild(string description, string op = null) => DisabledSpan.Instance;
 
         public Task StartChild(string url, ESpanRequest requestType, Action<ISpanBase> action)
-        {
-            throw new NotImplementedException();
-        }
+            =>Task.Run(() => action(DisabledSpan.Instance));
 
         public Task StartChild(string description, string op, Action<ISpanBase> action)
-        {
-            throw new NotImplementedException();
-        }
+            => Task.Run(() => action(DisabledSpan.Instance));
+
+        public Task StartChild(string description, string op, Func<ISpanBase, Task> func)
+            => func(DisabledSpan.Instance);
 
         public ISentryTracing StartTransaction(string name) => DisabledTracing.Instance;
 

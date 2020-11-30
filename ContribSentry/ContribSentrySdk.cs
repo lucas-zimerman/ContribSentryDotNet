@@ -164,6 +164,9 @@ namespace ContribSentry
         public static Task StartChild(string description, [CallerMemberName] string op = "", Action<ISpanBase> action = null)
             => TracingService.StartChild(description, op, action);
 
+        public static Task StartChild(string description, [CallerMemberName] string op = "", Func<ISpanBase, Task> func = null)
+            => TracingService.StartChild(description, op, func);
+
         internal static void CaptureTransaction(SentryTracing tracing, Exception ex)
             => TracingService.CaptureTransaction(tracing, ex);
         #endregion
