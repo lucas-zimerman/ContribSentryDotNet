@@ -8,4 +8,9 @@
 # SentryContrib
 ### Unnoficial addons for Sentry.Net SDK
 
+|      Integrations             |    Downloads     |    NuGet Stable     |    NuGet Preview     |
+| ----------------------------- | :-------------------: | :-------------------: | :-------------------: |
+|         **ContribSentry**            | [![Downloads](https://img.shields.io/nuget/dt/ContribSentry.svg)](https://www.nuget.org/packages/ContribSentry) | [![NuGet](https://img.shields.io/nuget/v/ContribSentry.svg)](https://www.nuget.org/packages/ContribSentry)   |    [![NuGet](https://img.shields.io/nuget/vpre/ContribSentry.svg)](https://www.nuget.org/packages/ContribSentry)   |
+
+
 For more information check the Wiki
