@@ -21,9 +21,14 @@ namespace ContribSentry.Extensibility
 
         public void Init(ContribSentryOptions options) { }
 
+        public void Resume() { }
+
+        public void Sleep() { }
+
         public ISentryTracing RetreiveTransactionById(string id) => DisabledTracing.Instance;
 
         public ISentryTracing RetreiveTransactionByName(string name) => DisabledTracing.Instance;
+
 
         public Task StartCallbackTrackingIdAsync(Func<Task> test, int? unsafeId) => new Task(()=> { });
 

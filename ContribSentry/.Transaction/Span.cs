@@ -126,6 +126,16 @@ namespace ContribSentry
             }
         }
 
+        internal void Finish(string status)
+        {
+            if (!_finished)
+            {
+                _finished = true;
+                Status = "idle";
+                Timestamp = DateTimeOffset.UtcNow;
+            }
+        }
+
         public void GetParentSpans(List<ISpanBase> spans)
         {
             Spans = spans;

@@ -71,7 +71,7 @@ namespace ContribSentry
 
         public SentryTracing(string name, string op)
         {
-            EventId = new SentryId();
+            EventId = Guid.NewGuid();
             Trace = new Trace(op);
             Transaction = name;
             StartTimestamp = DateTimeOffset.UtcNow;

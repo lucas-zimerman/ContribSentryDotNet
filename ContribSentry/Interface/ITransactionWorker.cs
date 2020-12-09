@@ -16,5 +16,8 @@ namespace ContribSentry.Interface
         Task StartChild(string description, string op, Action<ISpanBase> action);
         Task StartChild(string description, string op, Func<ISpanBase, Task> func);
         void CaptureTransaction(SentryTracing tracing, Exception ex);
+
+        void Sleep();
+        void Resume();
     }
 }

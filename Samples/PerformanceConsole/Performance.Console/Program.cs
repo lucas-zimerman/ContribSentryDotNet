@@ -11,11 +11,10 @@ namespace Performance.Console
         {
             SentrySdk.Init(o =>
             {
-                o.AddIntegration(new ContribSentrySdkIntegration());
-                o.Dsn = "https://1b869b04656740518013bc2e9d5753b7@o188313.ingest.sentry.io/5458365";
+                o.AddIntegration(new ContribSentrySdkIntegration(new ContribSentryOptions() {RegisterTracingBreadcrumb = false }));
+                o.Dsn = "https://80aed643f81249d4bed3e30687b310ab@o447951.ingest.sentry.io/5428537";
                 o.Debug = true;
             });
-
             var operation1 = Task.Run(() =>
             {
                 ContribSentrySdk.StartTransaction("Test Init", (transaction) =>
@@ -88,6 +87,11 @@ namespace Performance.Console
                 //Do stuff
                 await Task.Delay(50);
                 await SubSubTaskLevel();
+
+                ContribSentrySdk.Sleep();
+                await Task.Delay(5000);
+                ContribSentrySdk.Resume();
+                
                 await SubSubTaskLevel();
                 await SubSubTaskLevel();
             });

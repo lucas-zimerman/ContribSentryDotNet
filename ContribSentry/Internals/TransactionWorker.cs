@@ -17,6 +17,7 @@ namespace ContribSentry.Internals
         internal AsyncLocal<ISpanBase> CurrentSpan = new AsyncLocal<ISpanBase>();
         private SentryTracingEventProcessor _tracingEventProcessor;
         private ContribSentryOptions _options;
+        private AsyncLocal<ISpanBase> _sleepSpan = new AsyncLocal<ISpanBase>();
 
         public void Init(ContribSentryOptions options)
         {
@@ -154,6 +155,27 @@ namespace ContribSentry.Internals
                     ContribSentrySdk.Transport.CaptureTracing(tracing);
                 }
             });
+        }
+
+        public void Sleep()
+        {
+            if (CurrentSpan.Value is null)
+            {
+                var transaction = GetCurrentTransaction();
+                _sleepSpan.Value = transaction.StartChild("Sleep", "ContribSentrySDK");
+            }
+            else
+            {
+                _sleepSpan.Value = CurrentSpan.Value.StartChild("Sleep", "ContribSentrySDK");
+            }
+        }
+
+        public void Resume()
+        {
+            if(_sleepSpan.Value is Span span)
+            {
+                span.Finish("idle");
+            }
         }
     }
 }

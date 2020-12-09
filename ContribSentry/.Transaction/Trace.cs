@@ -26,7 +26,6 @@ namespace ContribSentry
             Op = op;
             TraceId = Guid.NewGuid().LimitLength(100);
             SpanId = Guid.NewGuid().LimitLength();
-
         }
     }
 }

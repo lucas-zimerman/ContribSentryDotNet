@@ -19,7 +19,7 @@ namespace ContribSentry.Interface
 
         void Finish();
         void Finish(int? httpStatus);
-        void Finish(Exception exception);   
+        void Finish(Exception exception);
         void GetParentSpans(List<ISpanBase> spans);
         ISpanBase StartChild(string url, ESpanRequest requestType);
         ISpanBase StartChild(string description, string op = null);

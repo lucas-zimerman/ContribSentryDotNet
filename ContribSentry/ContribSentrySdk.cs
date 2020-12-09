@@ -77,6 +77,7 @@ namespace ContribSentry
         public static void Sleep()
         {
             SessionService.CacheCurrentSesion();
+            TracingService.Sleep();
         }
 
         /// <summary>
@@ -85,6 +86,7 @@ namespace ContribSentry
         public static void Resume()
         {
             SessionService.DeleteCachedCurrentSession();
+            TracingService.Resume();
         }
 
         /// <summary>
