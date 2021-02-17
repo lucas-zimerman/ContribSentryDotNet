@@ -1,3 +1,8 @@
+UPDATE: This project will no longer be updated.
+In advance, future work will be done to the following projects:
+https://github.com/getsentry/sentry-xamarin
+https://github.com/getsentry/sentry-dotnet
+
 <p align="center">
   <a target="_blank" align="center">
     <img src="https://github.com/lucas-zimerman/sentry-dotnet-performance-addon/blob/master/.assets/nugget-logo.png" width="280">
