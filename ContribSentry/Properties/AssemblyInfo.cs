@@ -5,3 +5,4 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("ContribSentry.Test")]
 [assembly: InternalsVisibleTo("ContribSentry.AspNetCore")]
 [assembly: InternalsVisibleTo("ContribSentry.AspNetCore.Tests")]
+[assembly: InternalsVisibleTo("Performance.Console")]

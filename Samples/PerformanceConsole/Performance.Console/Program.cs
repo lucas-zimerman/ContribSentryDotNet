@@ -19,6 +19,10 @@ namespace Performance.Console
             {
                 ContribSentrySdk.StartTransaction("Test Init", (transaction) =>
                 {
+                    var @event = new SentryEvent(new Exception("Hi bug"));
+                    @event.Contexts.AddOrUpdate("trace", ((SentryTracing)transaction).Trace, (id, trace) => trace);
+                    @event.Transaction = "Test Init";
+                    SentrySdk.CaptureEvent(@event);
                     var task = new Task[]
                     {
                     Level1(),
