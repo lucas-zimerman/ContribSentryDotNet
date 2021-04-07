@@ -1,5 +1,6 @@
 ﻿using ContribSentry.Internals;
 using Sentry;
+using System;
 using System.Collections.Generic;
 
 namespace ContribSentry.Transaction
@@ -24,14 +25,13 @@ namespace ContribSentry.Transaction
         {
             tracing.Breadcrumbs = sentryEvent.Breadcrumbs;
             tracing.Contexts = sentryEvent.Contexts;
+            tracing.Contexts.Trace.Operation = tracing.Trace.Op;
+            tracing.Contexts.Trace.TraceId = Guid.Parse(tracing.Trace.TraceId);
+            tracing.Contexts.Trace.SpanId = new SpanId(tracing.Trace.SpanId);
             tracing.Environment = sentryEvent.Environment;
             tracing.Extra = sentryEvent.Extra;
-            tracing.EventId = sentryEvent.EventId;
-            tracing.Fingerprint = sentryEvent.Fingerprint;
-            tracing.Level = sentryEvent.Level;
             tracing.Release = sentryEvent.Release;
             tracing.Request = sentryEvent.Request;
-            tracing.Sdk = sentryEvent.Sdk;
             tracing.Tags = sentryEvent.Tags;
             tracing.User = sentryEvent.User;
             tracing.Contexts.TryRemove(SentryTracing.TracingEventMessageKey, out _);

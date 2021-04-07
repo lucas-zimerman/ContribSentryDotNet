@@ -28,7 +28,7 @@ namespace ContribSentry
             CacheEnabled = cacheEnable;
             CacheDirSize = CacheDirSizeDefault;
 
-            ContribSdk = new SdkVersion() { Name = "ContribSentry", Version = "3.0.1" };
+            ContribSdk = new SdkVersion() { Name = "ContribSentry", Version = "4.0.0" };
         }
 
         internal void ConsumeSentryOptions(SentryOptions options)

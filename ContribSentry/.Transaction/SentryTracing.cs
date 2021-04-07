@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Sentry.Protocol;
 using System.Collections.Concurrent;
 
 namespace ContribSentry
@@ -70,14 +69,22 @@ namespace ContribSentry
                 var hasError = Spans.Any(p => p.Error);
                 Trace.SetStatus(Spans.LastOrDefault()?.Status);
 
-                var @tracing = new SentryTracingEvent(this, hasError);
+                var @dumpEvent = new SentryEvent()
+                {
+                    Message = TracingEventMessageKey
+                };
+
+                var @tracing = new SentryTracingEvent(this, hasError)
+                {
+                    EventId = dumpEvent.EventId
+                };
                 if (ContribSentrySdk.Options.RegisterTracingBreadcrumb)
                 {
                     SentrySdk.AddBreadcrumb(@tracing.EventId.ToString(), "sentry.transaction");
                 }
                 SentrySdk.WithScope(scope =>
                 {
-                    var @dumpEvent = new SentryEvent() { Message = TracingEventMessageKey };
+
                     dumpEvent.Contexts[TracingEventMessageKey] = @tracing;
                     SentrySdk.CaptureEvent(@dumpEvent);
                 });

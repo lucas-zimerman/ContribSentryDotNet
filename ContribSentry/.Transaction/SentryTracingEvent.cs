@@ -3,13 +3,15 @@ using Sentry;
 using ContribSentry.Interface;
 using System;
 using System.Collections.Generic;
+using ContribSentry.Internals;
 
 namespace ContribSentry
 {
     public class SentryTracingEvent : IEventLike
     {
 
-        [JsonProperty("sentry_id")]
+        [JsonConverter(typeof(SentryIdJsonConverter))]
+        [JsonProperty("event_id")]
         public SentryId EventId { get; set; }
 
         [JsonProperty("type")]
@@ -21,29 +23,22 @@ namespace ContribSentry
         [JsonProperty("start_timestamp")]
         public DateTimeOffset StartTimestamp { get; private set; }
 
+        [JsonProperty("timestamp")]
+        public DateTimeOffset Timestamp { get; set; }
+
         [JsonProperty("level")]
         public SentryLevel? Level { get; set; }
 
+        [JsonConverter(typeof(SentryNewtonsoftJsonConverter))]
         [JsonProperty("request")]
         public Request Request { get ; set; }
 
-        private Contexts _contexts;
-
+        [JsonConverter(typeof(SentryNewtonsoftJsonConverter))]
         [JsonProperty("contexts")]
-        public Contexts Contexts
-        {
-            get 
-            {
-                if(_contexts is null)
-                {
-                    _contexts = new Contexts();
-                }
-                return _contexts;
-            }
-            set => _contexts = value;
-        }
+        public Contexts Contexts { get; set; }
 
-        [JsonProperty("users")]
+        [JsonConverter(typeof(SentryNewtonsoftJsonConverter))]
+        [JsonProperty("user")]
         public User User { get ; set ; }
 
         [JsonProperty("release")]
@@ -74,15 +69,21 @@ namespace ContribSentry
         [JsonProperty("platform")]
         public string Platform { get ; set ; }
 
+        [JsonIgnore]
+        internal Trace Trace { get; }
+
         internal SentryTracingEvent(SentryTracing transactionEvent, bool hasError)
         {
             TransactionName = transactionEvent.Transaction;
             Type = "transaction";
+
             EventId = SentryId.Create();
             Level = hasError ? SentryLevel.Error : SentryLevel.Info;
-            Contexts.AddOrUpdate("trace", transactionEvent.Trace, (id, trace) => trace);
+            Trace = transactionEvent.Trace;
             Spans = transactionEvent.Spans;
             StartTimestamp = transactionEvent.StartTimestamp;
+            Timestamp = DateTimeOffset.UtcNow;
+            Sdk = ContribSentrySdk.Options.ContribSdk;
             this.SetExtras(transactionEvent.Extra);
         }
 
