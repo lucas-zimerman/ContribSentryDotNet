@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Sentry.Protocol;
+using Sentry;
 using System.Collections.Generic;
 
 namespace ContribSentry.Internals

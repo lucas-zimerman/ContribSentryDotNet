@@ -1,6 +1,6 @@
 ﻿using ContribSentry.Extensibility;
 using ContribSentry.Interface;
-using Sentry.Protocol;
+using Sentry;
 
 namespace ContribSentry.Test.Mock
 {

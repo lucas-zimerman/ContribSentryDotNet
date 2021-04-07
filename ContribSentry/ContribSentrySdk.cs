@@ -1,10 +1,10 @@
-﻿using Sentry.Protocol;
-using ContribSentry.Enums;
+﻿using ContribSentry.Enums;
 using ContribSentry.Internals;
 using ContribSentry.Interface;
 using ContribSentry.Extensibility;
 using System;
 using ContribSentry.Cache;
+using Sentry;
 
 namespace ContribSentry
 {

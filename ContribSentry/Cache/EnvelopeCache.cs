@@ -1,6 +1,6 @@
 ﻿using ContribSentry.Enums;
 using ContribSentry.Interface;
-using Sentry.Protocol;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.IO;

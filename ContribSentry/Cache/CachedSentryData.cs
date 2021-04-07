@@ -1,5 +1,5 @@
 ﻿using ContribSentry.Enums;
-using Sentry.Protocol;
+using Sentry;
 
 namespace ContribSentry.Cache
 {
