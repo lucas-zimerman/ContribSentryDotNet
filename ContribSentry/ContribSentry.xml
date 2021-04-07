@@ -88,7 +88,7 @@
             Clears the project Data.
             </summary>
         </member>
-        <member name="M:ContribSentry.ContribSentrySdk.StartSession(Sentry.Protocol.User)">
+        <member name="M:ContribSentry.ContribSentrySdk.StartSession(Sentry.User)">
             <summary>
             Start new Session for the given user, if the user is not set, it'll use the DistinctId to distinct the user.
             </summary>
@@ -204,7 +204,7 @@
             <param name="options"></param>
             <param name="endConsumer">The internal Class used for sending Sessions to Sentry.</param>
         </member>
-        <member name="M:ContribSentry.Interface.IContribSentrySessionService.StartSession(Sentry.Protocol.User,System.String,System.String,System.String)">
+        <member name="M:ContribSentry.Interface.IContribSentrySessionService.StartSession(Sentry.User,System.String,System.String,System.String)">
             <summary>
             Start a new Session.<br/>
             Note: This function shouldn't be called by the developer.<br/>
@@ -257,6 +257,41 @@
             Invoke the user code on an isolated environment so that you can interact with Tracing from anywhere. 
             </summary>
             <returns>A task where the user code is running.</returns>
+        </member>
+        <member name="T:ContribSentry.Internals.ContribDsn">
+            <summary>
+            Based on Sentry .NET SDK's DSN code
+            </summary>
+        </member>
+        <member name="P:ContribSentry.Internals.ContribDsn.Source">
+            <summary>
+            Source DSN string.
+            </summary>
+        </member>
+        <member name="P:ContribSentry.Internals.ContribDsn.ProjectId">
+            <summary>
+            The project ID which the authenticated user is bound to.
+            </summary>
+        </member>
+        <member name="P:ContribSentry.Internals.ContribDsn.Path">
+            <summary>
+            An optional path of which Sentry is hosted.
+            </summary>
+        </member>
+        <member name="P:ContribSentry.Internals.ContribDsn.SecretKey">
+            <summary>
+            The optional secret key to authenticate the SDK.
+            </summary>
+        </member>
+        <member name="P:ContribSentry.Internals.ContribDsn.PublicKey">
+            <summary>
+            The required public key to authenticate the SDK.
+            </summary>
+        </member>
+        <member name="P:ContribSentry.Internals.ContribDsn.ApiBaseUri">
+            <summary>
+            Sentry API's base URI.
+            </summary>
         </member>
         <member name="P:ContribSentry.Internals.SentryEnvelopeHeader._eventIdString">
              <summary>

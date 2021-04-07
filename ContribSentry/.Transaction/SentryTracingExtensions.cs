@@ -23,16 +23,19 @@ namespace ContribSentry.Transaction
 
         internal static void SetSentryEvent(this SentryTracingEvent tracing, SentryEvent sentryEvent)
         {
-            tracing.Breadcrumbs = sentryEvent.Breadcrumbs;
+            foreach (var breadcrumb in sentryEvent.Breadcrumbs)
+            {
+                tracing.AddBreadcrumb(breadcrumb);
+            }
             tracing.Contexts = sentryEvent.Contexts;
             tracing.Contexts.Trace.Operation = tracing.Trace.Op;
             tracing.Contexts.Trace.TraceId = Guid.Parse(tracing.Trace.TraceId);
             tracing.Contexts.Trace.SpanId = new SpanId(tracing.Trace.SpanId);
             tracing.Environment = sentryEvent.Environment;
-            tracing.Extra = sentryEvent.Extra;
+            tracing.SetExtras(sentryEvent.Extra);
             tracing.Release = sentryEvent.Release;
             tracing.Request = sentryEvent.Request;
-            tracing.Tags = sentryEvent.Tags;
+            tracing.SetTags(sentryEvent.Tags);
             tracing.User = sentryEvent.User;
             tracing.Contexts.TryRemove(SentryTracing.TracingEventMessageKey, out _);
         }

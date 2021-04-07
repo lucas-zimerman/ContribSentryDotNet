@@ -57,14 +57,21 @@ namespace ContribSentry
 
         public IReadOnlyList<string> Fingerprint { get ; set ; }
 
+        private List<Breadcrumb> _breadcrumbs { get; set; }
+
         [JsonProperty("breadcrumbs")]
-        public IReadOnlyCollection<Breadcrumb> Breadcrumbs { get; set; }
+        public IReadOnlyCollection<Breadcrumb> Breadcrumbs => _breadcrumbs;
+
+        private Dictionary<string, string> _tags { get; set; }
 
         [JsonProperty("tags")]
-        public IReadOnlyDictionary<string, string> Tags { get; set;}
+        public IReadOnlyDictionary<string, string> Tags => _tags;
+
+
+        private Dictionary<string, object> _extra;
 
         [JsonProperty("extra")]
-        public IReadOnlyDictionary<string, object> Extra { get; set; }
+        public IReadOnlyDictionary<string, object> Extra => _extra;
 
         [JsonProperty("platform")]
         public string Platform { get ; set ; }
@@ -84,27 +91,30 @@ namespace ContribSentry
             StartTimestamp = transactionEvent.StartTimestamp;
             Timestamp = DateTimeOffset.UtcNow;
             Sdk = ContribSentrySdk.Options.ContribSdk;
+            _extra = new Dictionary<string, object>();
+            _tags = new Dictionary<string, string>();
+            _breadcrumbs = new List<Breadcrumb>();
             this.SetExtras(transactionEvent.Extra);
         }
 
         public void AddBreadcrumb(Breadcrumb breadcrumb)
         {
-            throw new NotImplementedException();
+            _breadcrumbs.Add(breadcrumb);
         }
 
         public void SetTag(string key, string value)
         {
-            throw new NotImplementedException();
+            _tags[key] = value;
         }
 
         public void UnsetTag(string key)
         {
-            throw new NotImplementedException();
+            _tags.Remove(key);
         }
 
         public void SetExtra(string key, object value)
         {
-            throw new NotImplementedException();
+            _extra[key] = value;
         }
     }
 }
