@@ -14,7 +14,7 @@ namespace DotNetCoreConsoleSession
             var sentryOptions = new SentryOptions()
             {
                 Environment = "development",
-                Dsn = new Dsn("https://1b869b04656740518013bc2e9d5753b7@o188313.ingest.sentry.io/5458365"),
+                Dsn = "https://1b869b04656740518013bc2e9d5753b7@o188313.ingest.sentry.io/5458365",
                 Debug = true,
                 Release = $"ContribSentrySamples X"
             };

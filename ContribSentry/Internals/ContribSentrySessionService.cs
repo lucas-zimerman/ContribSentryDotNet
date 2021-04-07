@@ -1,8 +1,8 @@
 ﻿using ContribSentry.Cache;
 using ContribSentry.Enums;
 using ContribSentry.Interface;
+using Sentry;
 using Sentry.Extensibility;
-using Sentry.Protocol;
 using System;
 
 namespace ContribSentry.Internals

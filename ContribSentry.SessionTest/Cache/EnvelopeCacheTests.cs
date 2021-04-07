@@ -1,9 +1,7 @@
 ﻿using ContribSentry.Cache;
 using ContribSentry.Enums;
 using ContribSentry.Testing;
-using Sentry.Protocol;
-using System;
-using System.Collections.Generic;
+using Sentry;
 using System.IO;
 using Xunit;
 

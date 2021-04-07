@@ -1,4 +1,5 @@
 ﻿using ContribSentry.Interface;
+using Sentry;
 using Sentry.Protocol;
 
 namespace ContribSentry.Extensibility
@@ -20,5 +21,6 @@ namespace ContribSentry.Extensibility
         public void CacheCurrentSesion() { }
 
         public void DeleteCachedCurrentSession() { }
+
     }
 }

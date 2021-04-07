@@ -1,4 +1,5 @@
 ﻿using ContribSentry.Interface;
+using ContribSentry.Internals;
 using Sentry;
 using Sentry.Extensibility;
 using Sentry.Protocol;
@@ -32,7 +33,7 @@ namespace ContribSentry
 
         internal void ConsumeSentryOptions(SentryOptions options)
         {
-            Dsn = options.Dsn;
+            Dsn = ContribDsn.Parse(options.Dsn);
             Environment = options.Environment;
             Release = options.Release;
             BeforeSend = options.BeforeSend;
@@ -46,7 +47,7 @@ namespace ContribSentry
         }
 
         internal IDiagnosticLogger DiagnosticLogger { get; private set; }
-        internal Dsn Dsn { get; set; }
+        internal ContribDsn Dsn { get; set; }
         internal string Environment { get; set; }
         internal string Release { get; set; }
         internal bool IsEnabled => SessionEnabled || TransactionEnabled;

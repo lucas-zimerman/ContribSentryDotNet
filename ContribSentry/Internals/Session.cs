@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
-using Sentry.Protocol;
 using ContribSentry.Enums;
 using ContribSentry.Extensions;
 using System;
+using Sentry;
 
 namespace ContribSentry.Internals
 {

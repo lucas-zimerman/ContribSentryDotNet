@@ -1,7 +1,7 @@
 ﻿using ContribSentry.Cache;
 using ContribSentry.Enums;
 using ContribSentry.Testing;
-using Sentry.Protocol;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.IO;

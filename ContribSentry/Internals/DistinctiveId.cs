@@ -1,4 +1,4 @@
-﻿using Sentry.Protocol;
+﻿using Sentry;
 using System;
 using System.Security.Cryptography;
 using System.Text;
