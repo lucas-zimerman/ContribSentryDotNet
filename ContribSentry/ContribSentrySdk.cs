@@ -99,7 +99,7 @@ namespace ContribSentry
             TracingService = DisabledTracingService.Instance;
             EventCache = DisabledDiskCache.Instance;
             EnvelopeCache = DisabledEnvelopeCache.Instance;
-            Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Closed");
+            Options?.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Closed");
             CacheFileWorker = null;
             EndConsumer = null;
             Options = null;

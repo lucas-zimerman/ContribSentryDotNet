@@ -10,7 +10,7 @@ namespace ContribSentry
     {
 
         [JsonProperty("sentry_id")]
-        public SentryId EventId { get; }
+        public SentryId EventId { get; set; }
 
         [JsonProperty("type")]
         public string Type { get; private set; }
@@ -71,11 +71,14 @@ namespace ContribSentry
         [JsonProperty("extra")]
         public IReadOnlyDictionary<string, object> Extra { get; set; }
 
+        [JsonProperty("platform")]
+        public string Platform { get ; set ; }
 
         internal SentryTracingEvent(SentryTracing transactionEvent, bool hasError)
         {
             TransactionName = transactionEvent.Transaction;
             Type = "transaction";
+            EventId = SentryId.Create();
             Level = hasError ? SentryLevel.Error : SentryLevel.Info;
             Contexts.AddOrUpdate("trace", transactionEvent.Trace, (id, trace) => trace);
             Spans = transactionEvent.Spans;

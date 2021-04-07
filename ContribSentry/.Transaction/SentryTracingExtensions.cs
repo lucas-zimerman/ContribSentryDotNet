@@ -20,12 +20,13 @@ namespace ContribSentry.Transaction
             }
         }
 
-        internal static void SetSentryEvent(this SentryTracingEvent tracing, IEventLike sentryEvent)
+        internal static void SetSentryEvent(this SentryTracingEvent tracing, SentryEvent sentryEvent)
         {
             tracing.Breadcrumbs = sentryEvent.Breadcrumbs;
             tracing.Contexts = sentryEvent.Contexts;
             tracing.Environment = sentryEvent.Environment;
             tracing.Extra = sentryEvent.Extra;
+            tracing.EventId = sentryEvent.EventId;
             tracing.Fingerprint = sentryEvent.Fingerprint;
             tracing.Level = sentryEvent.Level;
             tracing.Release = sentryEvent.Release;
