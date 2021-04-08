@@ -62,7 +62,13 @@
             </summary>
             <param name="service">The Session service.</param>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:ContribSentry.ContribSentryOptions.SetHasInternetCallback(System.Func{System.Boolean})" -->
+        <member name="M:ContribSentry.ContribSentryOptions.SetHasInternetCallback(System.Func{System.Boolean})">
+            <summary>
+            Used to know if ContribSentry should cache or not SentryEvents since<br/>.
+            it act as a middleware.
+            </summary>
+            <param name="hasInternet">the call that should return if the application has internet or not.</param>
+        </member>
         <member name="P:ContribSentry.ContribSentryOptions.TrackingIdMethod">
             <summary>
             Tries to Inject a custom TracingContext that another project requested.

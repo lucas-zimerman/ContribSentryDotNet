@@ -90,7 +90,7 @@ namespace ContribSentry
             Spans = transactionEvent.Spans;
             StartTimestamp = transactionEvent.StartTimestamp;
             Timestamp = DateTimeOffset.UtcNow;
-            Sdk = ContribSentrySdk.Options.ContribSdk;
+            Sdk = ContribSentrySdk.Options?.ContribSdk;
             _extra = new Dictionary<string, object>();
             _tags = new Dictionary<string, string>();
             _breadcrumbs = new List<Breadcrumb>();
