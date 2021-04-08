@@ -13,7 +13,7 @@ namespace ContribSentry.AspNetCore.Tests
             try
             {
                 var integration = new ContribSentryNetCoreSdkIntegration();
-                integration.Register(null,new SentryOptions());
+                integration.Register(null,new SentryOptions() { Dsn = DsnHelper.ValidDsnWithoutSecret });
                 Assert.True(ContribSentrySdk.IsEnabled);
                 Assert.True(ContribSentrySdk.IsTracingSdkEnabled);
                 Assert.Equal(typeof(ContribSentryTracingService), ContribSentrySdk.TracingService.GetType());

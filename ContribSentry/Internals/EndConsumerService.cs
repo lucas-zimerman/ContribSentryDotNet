@@ -2,7 +2,7 @@
 using ContribSentry.Enums;
 using ContribSentry.Interface;
 using ContribSentry.Transport;
-using Sentry.Protocol;
+using Sentry;
 using System.IO;
 using System.Threading.Tasks;
 

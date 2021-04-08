@@ -1,17 +1,18 @@
-﻿using Sentry;
+﻿using ContribSentry.Internals;
+using Sentry;
 
 namespace ContribSentry.Extensions
 {
     internal static class DsnExtensions
     {
-        internal static string GetEnvelopeUrl(this Dsn dsn)
+        internal static string GetEnvelopeUrl(this ContribDsn dsn)
         {
-            return $"{dsn.SentryUri.Scheme}://{dsn.SentryUri.Host}/api/{dsn.ProjectId}/envelope/?sentry_key={dsn.PublicKey}&sentry_version=7";
+            return $"{dsn.GetEnvelopeEndpointUri()}/?sentry_key={dsn.PublicKey}&sentry_version=7";
         }
 
-        internal static string GetEventUrl(this Dsn dsn)
+        internal static string GetEventUrl(this ContribDsn dsn)
         {
-            return $"{dsn.SentryUri.Scheme}://{dsn.SentryUri.Host}/api/{dsn.ProjectId}/store/?sentry_key={dsn.PublicKey}";
+            return $"{dsn.GetStoreEndpointUri()}/?sentry_key={dsn.PublicKey}";
         }
     }
 }

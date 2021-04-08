@@ -1,7 +1,6 @@
 ﻿using ContribSentry.Extensibility;
-using Sentry.Protocol;
+using Sentry;
 using System;
-using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;

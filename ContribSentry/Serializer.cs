@@ -7,6 +7,7 @@ using System.Text;
 using Sentry;
 using Newtonsoft.Json.Converters;
 using ContribSentry.Extensions;
+using Newtonsoft.Json.Serialization;
 
 namespace ContribSentry
 {
@@ -23,6 +24,7 @@ namespace ContribSentry
             jsonSettings = new JsonSerializerSettings()
             {
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
                 DateFormatHandling = DateFormatHandling.IsoDateFormat,
                 DateTimeZoneHandling = DateTimeZoneHandling.Utc,
                 Formatting = Formatting.None,

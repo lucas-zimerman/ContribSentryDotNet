@@ -25,9 +25,9 @@ namespace ContribSentry
         public Trace()
         {
             var st = new StackTrace();
-            var sf = st.GetFrame(5);
+            var sf = st.GetFrame(5) ?? st.GetFrame(4) ?? st.GetFrame(3) ?? st.GetFrame(2) ?? st.GetFrame(1);
 
-            Op = sf.GetMethod().Name;
+            Op = sf?.GetMethod().Name;
             TraceId = Guid.NewGuid().LimitLength(100);
             SpanId = Guid.NewGuid().LimitLength();
 

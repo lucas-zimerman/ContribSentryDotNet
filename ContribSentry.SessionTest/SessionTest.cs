@@ -1,11 +1,9 @@
-using Moq;
-using Sentry.Protocol;
-using ContribSentry;
 using ContribSentry.Enums;
 using ContribSentry.Internals;
 using System;
 using System.Threading.Tasks;
 using Xunit;
+using Sentry;
 
 namespace SessionSdk.Test
 {

@@ -16,7 +16,7 @@ namespace SessionSdk.Test
             if (!ContribSentrySdk.IsEnabled)
             {
                 var integration = new ContribSentrySdkIntegration(new ContribSentryOptions() { GlobalSessionMode = true });
-                integration.Register(null, new SentryOptions() { Release = TestRelease, Environment = TestEnvironment, Dsn = new Dsn(Helpers.DsnHelper.ValidDsnWithoutSecret) });
+                integration.Register(null, new SentryOptions() { Release = TestRelease, Environment = TestEnvironment, Dsn = Helpers.DsnHelper.ValidDsnWithoutSecret });
             }
         }
     }

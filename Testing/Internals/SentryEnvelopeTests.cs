@@ -1,8 +1,5 @@
 ﻿using ContribSentry.Internals;
-using Sentry.Protocol;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Sentry;
 using Xunit;
 
 namespace ContribSentry.TracingTest.Internals

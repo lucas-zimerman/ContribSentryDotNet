@@ -1,7 +1,7 @@
 ﻿using ContribSentry.Interface;
+using ContribSentry.Internals;
 using Sentry;
 using Sentry.Extensibility;
-using Sentry.Protocol;
 using System;
 
 namespace ContribSentry
@@ -25,14 +25,15 @@ namespace ContribSentry
             SessionEnabled = sessionEnable;
 
             CacheEnabled = cacheEnable;
+            EventCacheEnabled = cacheEnable;
             CacheDirSize = CacheDirSizeDefault;
 
-            ContribSdk = new SdkVersion() { Name = "ContribSentry", Version = "3.0.1" };
+            ContribSdk = new SdkVersion() { Name = "ContribSentry", Version = "4.0.0" };
         }
 
         internal void ConsumeSentryOptions(SentryOptions options)
         {
-            Dsn = options.Dsn;
+            Dsn = ContribDsn.Parse(options.Dsn);
             Environment = options.Environment;
             Release = options.Release;
             BeforeSend = options.BeforeSend;
@@ -46,7 +47,7 @@ namespace ContribSentry
         }
 
         internal IDiagnosticLogger DiagnosticLogger { get; private set; }
-        internal Dsn Dsn { get; set; }
+        internal ContribDsn Dsn { get; set; }
         internal string Environment { get; set; }
         internal string Release { get; set; }
         internal bool IsEnabled => SessionEnabled || TransactionEnabled;
@@ -54,6 +55,8 @@ namespace ContribSentry
         public bool TransactionEnabled { get; private set; }
         public bool SessionEnabled { get; private set; }
         public bool CacheEnabled { get; private set; }
+
+        internal bool EventCacheEnabled { get; private set; }
         /// <summary>
         /// True for single user applications like Apps, Otherwise, False.
         /// </summary>
@@ -93,6 +96,14 @@ namespace ContribSentry
         public IEventCache EventCache { get; private set; }
 
         /// <summary>
+        /// Disable the caching of Sentry events from ContribSentry.
+        /// </summary>
+        public void DisableEventCaching()
+        {
+            EventCacheEnabled = false;
+        }
+
+        /// <summary>
         /// Allows to Inject a custom Tracing Service, must be set before SentrySdk.Init<br/>
         /// is called.
         /// </summary>
@@ -113,7 +124,7 @@ namespace ContribSentry
         }
 
         /// <summary>
-        /// Used to know if ContribSentry should cache or not SentryEvents since<br/.
+        /// Used to know if ContribSentry should cache or not SentryEvents since<br/>.
         /// it act as a middleware.
         /// </summary>
         /// <param name="hasInternet">the call that should return if the application has internet or not.</param>

@@ -1,6 +1,6 @@
 ﻿using ContribSentry.Enums;
 using ContribSentry.Internals;
-using Sentry.Protocol;
+using Sentry;
 using Xunit;
 
 namespace ContribSentry.SessionTest.Internals

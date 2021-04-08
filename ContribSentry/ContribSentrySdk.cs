@@ -1,10 +1,10 @@
-﻿using Sentry.Protocol;
-using ContribSentry.Enums;
+﻿using ContribSentry.Enums;
 using ContribSentry.Internals;
 using ContribSentry.Interface;
 using ContribSentry.Extensibility;
 using System;
 using ContribSentry.Cache;
+using Sentry;
 
 namespace ContribSentry
 {
@@ -52,7 +52,10 @@ namespace ContribSentry
                 if (IsCacheEnabled)
                 {
                     Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Initializing Cache Service");
-                    EventCache = new DiskCache(Options);
+                    if (Options.EventCacheEnabled)
+                    {
+                        EventCache = new DiskCache(Options);
+                    }
                     EnvelopeCache = new EnvelopeCache(Options);
                     CacheFileWorker = new CacheFileWorker();
                     if (!CacheFileWorker.StartWorker())
@@ -99,7 +102,7 @@ namespace ContribSentry
             TracingService = DisabledTracingService.Instance;
             EventCache = DisabledDiskCache.Instance;
             EnvelopeCache = DisabledEnvelopeCache.Instance;
-            Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Closed");
+            Options?.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Closed");
             CacheFileWorker = null;
             EndConsumer = null;
             Options = null;

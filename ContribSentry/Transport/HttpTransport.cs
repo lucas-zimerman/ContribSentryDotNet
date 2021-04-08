@@ -1,6 +1,6 @@
 ﻿using ContribSentry.Cache;
 using ContribSentry.Extensions;
-using Sentry.Protocol;
+using Sentry;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;

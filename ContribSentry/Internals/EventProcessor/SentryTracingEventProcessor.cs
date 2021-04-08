@@ -1,4 +1,5 @@
-﻿using Sentry;
+﻿using ContribSentry.Transaction;
+using Sentry;
 using Sentry.Extensibility;
 
 namespace ContribSentry.Internals.EventProcessor
@@ -7,10 +8,11 @@ namespace ContribSentry.Internals.EventProcessor
     {
         public SentryEvent Process(SentryEvent @event)
         {
-            if (@event is SentryTracingEvent performanceEvent)
+            if (@event.Message?.Message == SentryTracing.TracingEventMessageKey &&
+                @event.Contexts[SentryTracing.TracingEventMessageKey] is SentryTracingEvent tracing)
             {
-
-                ContribSentrySdk.EndConsumer.CaptureTracing(performanceEvent);
+                tracing.SetSentryEvent(@event);
+                ContribSentrySdk.EndConsumer.CaptureTracing(tracing);
                 return null;
             }
             return @event;

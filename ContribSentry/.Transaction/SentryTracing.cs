@@ -8,13 +8,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Sentry.Protocol;
 using System.Collections.Concurrent;
 
 namespace ContribSentry
 {
     public class SentryTracing : ISentryTracing
     {
+        internal static string TracingEventMessageKey => "@ContribSentryTransaction@";
+
         public List<ISpanBase> Spans { get; private set; }
         public DateTimeOffset StartTimestamp { get; private set; }
 
@@ -68,14 +69,24 @@ namespace ContribSentry
                 var hasError = Spans.Any(p => p.Error);
                 Trace.SetStatus(Spans.LastOrDefault()?.Status);
 
-                var @event = new SentryTracingEvent(this, hasError);
+                var @dumpEvent = new SentryEvent()
+                {
+                    Message = TracingEventMessageKey
+                };
+
+                var @tracing = new SentryTracingEvent(this, hasError)
+                {
+                    EventId = dumpEvent.EventId
+                };
                 if (ContribSentrySdk.Options.RegisterTracingBreadcrumb)
                 {
-                    SentrySdk.AddBreadcrumb(@event.EventId.ToString(), "sentry.transaction");
+                    SentrySdk.AddBreadcrumb(@tracing.EventId.ToString(), "sentry.transaction");
                 }
                 SentrySdk.WithScope(scope =>
                 {
-                    SentrySdk.CaptureEvent(@event);
+
+                    dumpEvent.Contexts[TracingEventMessageKey] = @tracing;
+                    SentrySdk.CaptureEvent(@dumpEvent);
                 });
             }
             ContribSentrySdk.TracingService.DisposeTracingEvent(this);
