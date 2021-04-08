@@ -43,6 +43,11 @@
             <br>the given tracing event Id if the event is sent to Sentry</br>
             </summary>
         </member>
+        <member name="M:ContribSentry.ContribSentryOptions.DisableEventCaching">
+            <summary>
+            Disable the caching of Sentry events from ContribSentry.
+            </summary>
+        </member>
         <member name="M:ContribSentry.ContribSentryOptions.SetTracingService(ContribSentry.Interface.IContribSentryTracingService)">
             <summary>
             Allows to Inject a custom Tracing Service, must be set before SentrySdk.Init<br/>

@@ -52,7 +52,10 @@ namespace ContribSentry
                 if (IsCacheEnabled)
                 {
                     Options.DiagnosticLogger?.Log(SentryLevel.Debug, $"ContribSentry Initializing Cache Service");
-                    EventCache = new DiskCache(Options);
+                    if (Options.EventCacheEnabled)
+                    {
+                        EventCache = new DiskCache(Options);
+                    }
                     EnvelopeCache = new EnvelopeCache(Options);
                     CacheFileWorker = new CacheFileWorker();
                     if (!CacheFileWorker.StartWorker())
